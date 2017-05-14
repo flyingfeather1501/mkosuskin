@@ -42,9 +42,11 @@ rm button.png
 echo creating score-percent...
 convert -size 1040x1 xc:none score-percent.png
 
-echo generating ranking-small from normal ranking...
-for i in ranking-{A,B,C,D,S,SH,X,XH}@2x.png; do
-  convert -resize 8% $i $(basename $i @2x.png)-small@2x.png
+echo resizing ranking-small...
+for i in ranking-{A,B,C,D,S,SH,X,XH}@2xtmp.png; do
+  [ ! -f $i ] && continue
+  convert -resize 8% $i $(basename $i @2xtmp.png)-small@2x.png
+  rm $i
 done
 
 for f in 8 4; do
