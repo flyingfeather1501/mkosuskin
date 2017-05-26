@@ -39,8 +39,8 @@ for i in button-{left,middle,right}.png; do
 done
 rm button.png
 
-echo creating score-percent...
-convert -size 1040x1 xc:none score-percent.png
+#echo creating score-percent...
+#convert -size 1040x1 xc:none score-percent.png
 
 echo resizing ranking-small...
 for i in ranking-{A,B,C,D,S,SH,X,XH}@2xtmp.png; do
