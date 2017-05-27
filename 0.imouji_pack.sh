@@ -46,7 +46,7 @@ autoresize () {
   filelist=$(find *resizeto*); [[ $? != 0 ]] && return
   for i in $filelist; do
     size=$(echo $i | cut -d'_' -f 2 | sed 's/resizeto//g; s/\.png//')
-    convert -resize $size $i $(basename $i _resizeto"$size".png)
+    convert -resize $size $i $(basename $i _resizeto"$size".png).png
     rm $i
   done
 }
