@@ -56,12 +56,12 @@ projectroot="$(pwd)"
 mkdir -p "$out"
 
 cd "$projectroot"/src/
-rm *.png # Cleanup
+[ -f *.png ] && rm *.png # Cleanup
 
 ### render images
 empties=(lighting.png sliderendcircle.png sliderpoint10.png sliderpoint30.png sliderscorepoint.png spinner-{glow,middle,bottom,clear,osu}.png ranking-graph.png hit300{,g,k}-0.png count{1,2,3}.png)
 
-gen_empties
+generate_empties
 render_marker *.blend
 autoresize
 alldownto2x
