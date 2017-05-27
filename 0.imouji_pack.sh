@@ -1,9 +1,8 @@
 #!/bin/bash
-
 ### functions
 render_marker () {
-  echo rendering $1
-  echo ========
+  echo ${BOLD}rendering $1
+  echo ${BOLD}========
   blender -b $1 --python render_marker.py
 }
 
@@ -53,7 +52,8 @@ autoresize () {
 }
 
 ### prepare
-version=$(date +%Y%m%d%H%M%S%z)
+BOLD=$(tput bold)
+[ -n $1 ] && version=$1 || version=$(date +%Y%m%d%H%M%S%z) # might need a better way to take arguments
 skinname="ReZero Script"
 out=out/"${skinname}"-"${version}"
 projectroot="$(pwd)"
@@ -85,10 +85,14 @@ cp button-left.png button-right.png
 
 ### package
 cd "$projectroot"
+echo moving rendered files into output folder...
 mv src/*.png "$out"/
 cp Audio/* "$out"/ # gotta also manage audio files later
 cp External\ Audio/* "$out"/
 sed "s/NNNNAAAAMMMMEEEE/$skinname/g" src/skin.ini > "$out/skin.ini"
 
+echo packaging output folder into osk file...
 7z a "$out".zip "$out"
 mv "$out".zip "$out".osk
+
+echo ${BOLD}"$out".osk is now ready.
