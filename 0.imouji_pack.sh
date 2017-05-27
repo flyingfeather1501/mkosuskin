@@ -1,8 +1,8 @@
 #!/bin/bash
 ### functions
 render_marker () {
-  echo ${BOLD}rendering $1
-  echo ${BOLD}========
+  echo ${BOLD}rendering $1${NORMAL}
+  echo ${BOLD}========${NORMAL}
   blender -b $1 --python render_marker.py
 }
 
@@ -53,6 +53,7 @@ autoresize () {
 
 ### prepare
 BOLD=$(tput bold)
+NORMAL=$(tput sgr0)
 [ -n $1 ] && version=$1 || version=$(date +%Y%m%d%H%M%S%z) # might need a better way to take arguments
 skinname="ReZero Script"
 out=out/"${skinname}"-"${version}"
@@ -95,4 +96,4 @@ echo packaging output folder into osk file...
 7z a "$out".zip "$out"
 mv "$out".zip "$out".osk
 
-echo ${BOLD}"$out".osk is now ready.
+echo ${BOLD}"$out".osk is now ready.${NORMAL}
