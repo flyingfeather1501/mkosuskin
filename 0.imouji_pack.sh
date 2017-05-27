@@ -11,10 +11,10 @@ echoerror () {
 
 cleanup () {
   echoerror aborted by user, cleaning up...
-  rm $projectroot/src/*.png 2>/dev/null
-  [ -f $out ] && rm $out -r
-  [ -f $out.osk ] && rm $out.osk
-  [ -f $out.zip ] && rm $out.zip
+  rm "$projectroot"/src/*.png 2>/dev/null
+  [ -f "$out" ] && rm "$out" -r
+  [ -f "$out".osk ] && rm "$out".osk
+  [ -f "$out".zip ] && rm "$out".zip
   echoreport exiting...
   exit
 }
