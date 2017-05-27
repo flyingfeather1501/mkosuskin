@@ -44,10 +44,12 @@ autotrim () {
 autoresize () {
   echo resizing images with _resizeto in them
   # name the files as ${name}_resizeto${x}x${y}.png
-  file=$(find *resizeto*); [[ $? != 0 ]] && return
-  size=$(echo $file | cut -d'_' -f 2 | sed 's/resizeto//g; s/\.png//')
-  convert -resize $size $file $(basename $file _resizeto"$size".png)
-  rm $file
+  filelist=$(find *resizeto*); [[ $? != 0 ]] && return
+  for i in $filelist; do
+    size=$(echo $i | cut -d'_' -f 2 | sed 's/resizeto//g; s/\.png//')
+    convert -resize $size $i $(basename $i _resizeto"$size".png)
+    rm $i
+  done
 }
 
 ### prepare
