@@ -121,7 +121,7 @@ echoreport moving rendered files into output folder...
 mv src/*.png "$out"/
 cp Audio/* "$out"/ # gotta also manage audio files later
 cp External\ Audio/* "$out"/
-sed "s/NNNNAAAAMMMMEEEE/$skinname/g" src/skin.ini > "$out/skin.ini"
+sed "s/NNNNAAAAMMMMEEEE/$skinname $revision/g" src/skin.ini > "$out/skin.ini"
 
 echoreport packaging output folder into osk file...
 7z a "$out".zip "$out"
