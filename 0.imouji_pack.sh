@@ -54,9 +54,19 @@ autoresize () {
 ### prepare
 BOLD=$(tput bold)
 NORMAL=$(tput sgr0)
-[ -n $1 ] && version=$1 || version=$(date +%Y%m%d%H%M%S%z) # might need a better way to take arguments
+case $1 in
+  -r)
+    [ -z $2 ] || revision=$2
+    ;;
+  -h|--help)
+    echo "Usage: $(basename $0) [-r REVISION] [-h|--help]"
+    exit
+    ;;
+  *)
+    revision=$(date +%Y%m%d%H%M%S%z)
+esac
 skinname="ReZero Script"
-out=out/"${skinname}"-"${version}"
+out=out/"${skinname}"-"${revision}"
 projectroot="$(pwd)"
 mkdir -p "$out"
 
