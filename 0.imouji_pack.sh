@@ -12,16 +12,16 @@ echoerror () {
 cleanup () {
   echoerror aborted by user, cleaning up...
   rm "$projectroot"/src/*.png 2>/dev/null
-  [ -f "$out" ] && rm "$out" -r
-  [ -f "$out".osk ] && rm "$out".osk
-  [ -f "$out".zip ] && rm "$out".zip
+  for i in "$projectroot"/out/"$outname"{,.osk,.zip}; do
+    [ -f "$i" ] && rm "$i" -r
+  done
   echoreport exiting...
   exit
 }
 
 render_marker () {
   echoreport rendering "$1"...
-  blender -b $1 --python render_marker.py
+  blender -b "$1" --python render_marker.py
 }
 
 alldownto2x () {
@@ -87,9 +87,9 @@ case $1 in
     revision=$(date +%Y%m%d%H%M%S%z)
 esac
 skinname="ReZero Script"
-out=out/"${skinname}"-"${revision}"
+outname="${skinname}"-"${revision}"
 projectroot="$(pwd)"
-mkdir -p "$out"
+mkdir -p "$projectroot"/out/"$outname"
 
 cd "$projectroot"/src/
 rm *.png >/dev/null 2>/dev/null # Cleanup
@@ -118,13 +118,14 @@ cp button-left.png button-right.png
 ### package
 cd "$projectroot"
 echoreport moving rendered files into output folder...
-mv src/*.png "$out"/
-cp Audio/* "$out"/ # gotta also manage audio files later
-cp External\ Audio/* "$out"/
-sed "s/NNNNAAAAMMMMEEEE/$skinname $revision/g" src/skin.ini > "$out/skin.ini"
+mv src/*.png out/"$outname"/
+cp Audio/* out/"$outname"/ # gotta also manage audio files later
+cp External\ Audio/* out/"$outname"/
+sed "s/NNNNAAAAMMMMEEEE/$skinname $revision/g" src/skin.ini > out/"$outname"/skin.ini
 
 echoreport packaging output folder into osk file...
-7z a "$out".zip "$out"
-mv "$out".zip "$out".osk
+cd $projectroot/out
+7z a "$outname".zip "$outname"/
+mv "$outname".zip "$outname".osk
 
-echoreport "$out".osk is now ready.
+echoreport "$outname".osk is now ready.
