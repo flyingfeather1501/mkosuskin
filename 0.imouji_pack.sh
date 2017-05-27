@@ -2,7 +2,7 @@
 
 ### functions
 render_marker () {
-  blender -b $1 --python render_marker.py
+  blender -b $1 --python render_marker.py >/dev/null
 }
 
 alldownto2x () {
@@ -56,13 +56,15 @@ projectroot="$(pwd)"
 mkdir -p "$out"
 
 cd "$projectroot"/src/
-[ -f *.png ] && rm *.png # Cleanup
+rm *.png >/dev/null 2>/dev/null # Cleanup
 
 ### render images
 empties=(lighting.png sliderendcircle.png sliderpoint10.png sliderpoint30.png sliderscorepoint.png spinner-{glow,middle,bottom,clear,osu}.png ranking-graph.png hit300{,g,k}-0.png count{1,2,3}.png)
 
 generate_empties
-render_marker *.blend
+for blend in *.blend; do
+  render_marker $blend
+done
 autoresize
 alldownto2x
 echo resizing score-dot and score-comma...
