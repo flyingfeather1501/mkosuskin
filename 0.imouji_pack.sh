@@ -2,7 +2,9 @@
 
 ### functions
 render_marker () {
-  blender -b $1 --python render_marker.py >/dev/null
+  echo rendering $1
+  echo ========
+  blender -b $1 --python render_marker.py
 }
 
 alldownto2x () {
