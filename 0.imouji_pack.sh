@@ -1,6 +1,11 @@
 #!/bin/bash
 
 ### functions
+exithelp () {
+  echo "Usage: $(basename $0) [-r REVISION] [-h|--help]"
+  exit $1
+}
+
 echoreport () {
   echo ${BOLD}${MAGENTA}"<$0> "${NORMAL}${BOLD}"$*"${NORMAL}
 }
@@ -77,11 +82,14 @@ MAGENTA=$(tput setaf 5)
 trap cleanup INT
 case $1 in
   -r)
-    [ -z $2 ] || revision=$2
+    if [ -z $2 ]; then
+      exithelp 1
+    else
+      revision=$2
+    fi
     ;;
   -h|--help)
-    echo "Usage: $(basename $0) [-r REVISION] [-h|--help]"
-    exit
+    exithelp 0
     ;;
   *)
     revision=$(date +%Y%m%d%H%M%S%z)
