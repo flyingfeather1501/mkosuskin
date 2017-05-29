@@ -95,7 +95,7 @@ case $1 in
     revision=$(date +%Y%m%d%H%M%S%z)
 esac
 skinname="ReZero Script"
-outname="${skinname}"-"${revision}"
+outname="${skinname} ${revision}"
 projectroot="$(pwd)"
 mkdir -p "$projectroot"/out/"$outname"
 
