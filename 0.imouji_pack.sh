@@ -2,7 +2,11 @@
 
 ### functions
 exithelp () {
-  echo "Usage: $(basename $0) [-r REVISION] [-h|--help]"
+  echo "Usage: $(basename $0) [-r REVISION | -d] [-h|--help]"
+  echo "Arguments:"
+  echo " -r REVISION  specify a revision"
+  echo " -d           revision=dev"
+  echo " -h           print help (this message)"
   exit $1
 }
 
@@ -85,8 +89,11 @@ case $1 in
     if [ -z $2 ]; then
       exithelp 1
     else
-      revision=$2
+      revision="$2"
     fi
+    ;;
+  -d)
+    revision="dev"
     ;;
   -h|--help)
     exithelp 0
