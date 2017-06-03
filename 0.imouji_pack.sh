@@ -110,12 +110,14 @@ cd "$projectroot"/src/
 rm *.png >/dev/null 2>/dev/null # Cleanup
 
 ### render images
-empties=(lighting.png sliderendcircle.png sliderpoint10.png sliderpoint30.png sliderscorepoint.png spinner-{glow,middle,bottom,clear,osu}.png ranking-graph.png hit300{,g,k}-0.png count{1,2,3}.png default-{0..9}.png)
+empties=(lighting.png sliderendcircle.png sliderpoint10.png sliderpoint30.png sliderscorepoint.png spinner-{glow,middle,clear}.png ranking-graph.png hit300{,g,k}-0.png count{1,2,3}.png default-{0..9}.png)
 
 generate_empties
 for blend in *.blend; do
   render_marker $blend
 done
+
+## post processing
 autoresize
 alldownto2x
 echoreport resizing score-dot and score-comma...
