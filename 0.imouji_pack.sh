@@ -13,11 +13,11 @@ exithelp () {
 
 echoreport () {
   echo ${BOLD}${MAGENTA}"<$0> "${NORMAL}${BOLD}"$*"${NORMAL}
-}
+}; export -f echoreport
 
 echoerror () {
   echo ${BOLD}${MAGENTA}"<$0> "${RED}${BOLD}"$*"${NORMAL} 1>&2
-}
+}; export -f echoerror
 
 cleanup () {
   echoerror aborted by user, cleaning up...
