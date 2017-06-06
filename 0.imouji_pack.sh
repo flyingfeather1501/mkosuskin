@@ -34,21 +34,22 @@ render_marker () {
   blender -b "$1" --python render_marker.py
 }; export -f render_marker
 
-alldownto2x () {
-for f in 8 4; do
-  echoreport resizing @"$f"x to @$((f/2))x and removing @"$f"x...
-  for i in *@"$f"x.png; do
-    [ ! -f $i ] && continue
-    convert -resize 50% $i "$(basename $i @"$f"x.png)@$((f/2))x.png"
-    rm $i
-  done
-done
-}
+#alldownto2x () {
+#for f in 8 4; do
+#  echoreport resizing @"$f"x to @$((f/2))x and removing @"$f"x...
+#  parallel
+#  for i in *@"$f"x.png; do
+#    [ ! -f $i ] && continue
+#    convert -resize 50% $i "$(basename $i @"$f"x.png)@$((f/2))x.png"
+#    rm $i
+#  done
+#done
+#}
 
-HD2SD () {
-  echo resizing $1 ...
-  convert -resize 50% $1 "$(basename $1 @2x.png).png"
-}; export -f HD2SD
+#HD2SD () {
+#  echo resizing $1 ...
+#  convert -resize 50% $1 "$(basename $1 @2x.png).png"
+#}; export -f HD2SD
 
 autotrim () {
   echoreport trimming totrim images...
@@ -59,16 +60,40 @@ autotrim () {
   done
 }
 
-autoresize () {
-  echoreport resizing images with _resizeto in them
+resize_at () {
+  # resize_at <n|t> <stst@Nx.png>
+  # $1 == n -> only resize @n | n != 2
+  # $1 == t -> only resize @2
+  two_switch=$1
+  orig_file=$2
+  orig_size=$(echo $orig_file | sed 's/.*@//g; s/x.*png//g') # "*@3x.png" -> "3x.png" -> "3"
+  case $two_switch in
+    t)
+      [ ! $orig_size -eq 2 ] && return
+      target_size=1
+      target_file=$(basename "$orig_file" @2x.png).png
+      ;;
+    n)
+      [ $orig_size -eq 2 ] && return
+      target_size=2
+      target_file=$(basename "$orig_file" @"$orig_size"x.png)@"$target_size"x.png
+      ;;
+    *)
+      echoerror resize_at failed && exit
+      ;;
+  esac
+    echo resizing $orig_file...
+  convert -resize $(python -c "print('{0:.2f}'.format((${target_size} / ${orig_size} * 100)) + '%')") $orig_file $target_file
+  [ ! "$orig_size" -eq 2 ] && rm $orig_file
+}; export -f resize_at
+
+resize_resizeto () {
+  echo resizing $1...
   # name the files as ${name}_resizeto${x}x${y}.png
-  filelist=$(find *resizeto*); [[ $? != 0 ]] && return
-  for i in $filelist; do
-    size=$(echo $i | cut -d'_' -f 2 | sed 's/resizeto//g; s/\.png//')
-    convert -resize $size $i "$(basename $i _resizeto"$size".png).png"
-    rm $i
-  done
-}
+  size=$(echo $1 | cut -d'_' -f 2 | sed 's/resizeto//g; s/\.png//')
+  convert -resize $size $1 "$(basename $1 _resizeto"$size".png).png"
+  rm $1
+}; export -f resize_resizeto
 
 ## prepare
 BOLD=$(tput bold)
@@ -113,8 +138,6 @@ parallel 'convert -size 1x1 xc:none' ::: ${empties[*]}
 parallel render_marker ::: *.blend
 
 ## post processing
-autoresize
-alldownto2x
 echoreport resizing score-dot and score-comma...
 for i in score-{dot,comma}@2xtmp.png; do
   [ ! -f $i ] && continue
@@ -123,9 +146,11 @@ for i in score-{dot,comma}@2xtmp.png; do
 done
 autotrim
 
-### hd2sd
-echoreport generating SD images from @2x images...
-parallel HD2SD ::: *@2x.png
+### resize
+echoreport resizing other images...
+parallel resize_resizeto ::: *resizeto*.png
+parallel "resize_at n" ::: *@*.png
+parallel "resize_at t" ::: *@*.png
 
 cp button-left.png button-middle.png
 cp button-left.png button-right.png
