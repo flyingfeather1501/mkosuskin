@@ -29,8 +29,13 @@ cleanup () {
   exit
 }
 
+render_normal () {
+  echoreport rendering "$i"...
+  blender -b "$1" -a
+}; export -f render_normal
+
 render_marker () {
-  echoreport rendering "$1"...
+  echoreport rendering "$1" with render_marker.py ...
   blender -b "$1" --python render_marker.py
 }; export -f render_marker
 
@@ -135,7 +140,8 @@ empties=(lighting.png sliderendcircle.png sliderpoint10.png sliderpoint30.png sl
 echoreport creating empty images...
 parallel 'convert -size 1x1 xc:none' ::: ${empties[*]}
 
-parallel render_marker ::: *.blend
+parallel render_marker ::: rendermarker.*.blend
+parallel render_normal ::: rendernormal.*.blend
 
 ## post processing
 echoreport resizing score-dot and score-comma...
