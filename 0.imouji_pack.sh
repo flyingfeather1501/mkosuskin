@@ -161,11 +161,17 @@ parallel "resize_at t" ::: *@*.png
 cp button-left.png button-middle.png
 cp button-left.png button-right.png
 
+## audio
+cd "$projectroot"/audio
+parallel lmms --format wav -r ::: */*.mmpz
+mv */*.wav ./
+
 ## package
 cd "$projectroot"
 echoreport moving rendered files into output folder...
 mv src/*.png out/"$outname"/
-cp Audio/* out/"$outname"/ # gotta also manage audio files later
+mv audio/*.wav out/"$outname"/
+cp audio/*.ogg out/"$outname"/
 cp External\ Audio/* out/"$outname"/
 sed "s/NNNNAAAAMMMMEEEE/$skinname $revision/g" src/skin.ini > out/"$outname"/skin.ini
 
