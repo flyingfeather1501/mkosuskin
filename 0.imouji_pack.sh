@@ -172,7 +172,6 @@ echoreport moving rendered files into output folder...
 mv src/*.png out/"$outname"/
 mv audio/*.wav out/"$outname"/
 cp audio/*.ogg out/"$outname"/
-cp External\ Audio/* out/"$outname"/
 sed "s/NNNNAAAAMMMMEEEE/$skinname $revision/g" src/skin.ini > out/"$outname"/skin.ini
 
 echoreport packaging output folder into osk file...
