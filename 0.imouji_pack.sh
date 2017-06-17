@@ -39,6 +39,11 @@ render_marker () {
   blender -b "$1" --python render_marker.py
 }; export -f render_marker
 
+render_audio_lmms () {
+  echoreport rendering audio "$1" ...
+  lmms --format wav -r "$1"
+}; export render_audio_lmms
+
 #alldownto2x () {
 #for f in 8 4; do
 #  echoreport resizing @"$f"x to @$((f/2))x and removing @"$f"x...
@@ -142,6 +147,7 @@ parallel 'convert -size 1x1 xc:none' ::: ${empties[*]}
 
 parallel render_marker ::: rendermarker.*.blend
 parallel render_normal ::: rendernormal.*.blend
+parallel render_audio_lmms lmms.*.mmpz
 
 ## post processing
 echoreport resizing score-dot and score-comma...
@@ -161,17 +167,12 @@ parallel "resize_at t" ::: *@*.png
 cp button-left.png button-middle.png
 cp button-left.png button-right.png
 
-## audio
-cd "$projectroot"/audio
-parallel lmms --format wav -r ::: */*.mmpz
-mv */*.wav ./
-
 ## package
 cd "$projectroot"
 echoreport moving rendered files into output folder...
 mv src/*.png out/"$outname"/
-mv audio/*.wav out/"$outname"/
-cp audio/*.ogg out/"$outname"/
+mv src/*.wav out/"$outname"/
+cp audio/*.ogg out/"$outname"/ # for external / prerecorded audio files
 sed "s/NNNNAAAAMMMMEEEE/$skinname $revision/g" src/skin.ini > out/"$outname"/skin.ini
 
 echoreport packaging output folder into osk file...
