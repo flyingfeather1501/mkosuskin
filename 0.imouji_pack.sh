@@ -147,7 +147,7 @@ parallel 'cp empty_image' ::: ${empties[*]}
 
 parallel render_marker ::: rendermarker.*.blend
 parallel render_normal ::: rendernormal.*.blend
-parallel render_audio_lmms lmms.*.mmpz
+parallel render_audio_lmms ::: lmms.*.mmpz
 
 ## post processing
 echoreport resizing score-dot and score-comma...
