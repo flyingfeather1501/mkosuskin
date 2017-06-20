@@ -1,3 +1,4 @@
 *.blend1
 out/
 src/*.png
+*.swp
