@@ -139,7 +139,7 @@ rm *.png >/dev/null 2>/dev/null # Cleanup
 echoreport starting to render "$outname"...
 
 ## render images
-empties=(lighting.png sliderendcircle.png sliderpoint10.png sliderpoint30.png sliderscorepoint.png spinner-{glow,middle,clear,approachcircle}.png ranking-graph.png hit300{,g,k}-0.png count{1,2,3}.png default-{0..9}.png)
+empties=(lighting.png sliderendcircle.png sliderpoint10.png sliderpoint30.png sliderscorepoint.png spinner-{glow,middle,clear,approachcircle}.png ranking-graph.png hit300{,g,k}-0.png count{1,2,3}.png default-{0..9}.png scorebar-bg.png inputoverlay-background.png)
 
 ### empties
 echoreport copying empty image template to images...
