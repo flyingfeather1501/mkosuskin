@@ -42,7 +42,7 @@ render_marker () {
 render_audio_lmms () {
   echoreport rendering audio "$1" ...
   lmms --format wav -r "$1"
-}; export render_audio_lmms
+}; export -f render_audio_lmms
 
 #alldownto2x () {
 #for f in 8 4; do
