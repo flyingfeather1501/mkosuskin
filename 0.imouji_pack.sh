@@ -142,8 +142,8 @@ echoreport starting to render "$outname"...
 empties=(lighting.png sliderendcircle.png sliderpoint10.png sliderpoint30.png sliderscorepoint.png spinner-{glow,middle,clear,approachcircle}.png ranking-graph.png hit300{,g,k}-0.png count{1,2,3}.png default-{0..9}.png)
 
 ### empties
-echoreport creating empty images...
-parallel 'convert -size 1x1 xc:none' ::: ${empties[*]}
+echoreport copying empty image template to images...
+parallel 'cp empty_image' ::: ${empties[*]}
 
 parallel render_marker ::: rendermarker.*.blend
 parallel render_normal ::: rendernormal.*.blend
