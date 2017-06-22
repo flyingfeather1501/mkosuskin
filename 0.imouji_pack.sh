@@ -36,7 +36,7 @@ render_normal () {
 
 render_marker () {
   echoreport rendering "$1" with render_marker.py ...
-  blender -b "$1" --python render_marker.py
+  blender -b "$1" --python "$projectroot"/utils/render_marker.py
 }; export -f render_marker
 
 render_audio_lmms () {
