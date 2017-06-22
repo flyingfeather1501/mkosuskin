@@ -42,6 +42,7 @@ render_marker () {
 render_audio_lmms () {
   echoreport rendering audio "$1" ...
   lmms --format wav -r "$1"
+  mv "$(basename $1 .mmpz)".wav "$(echo $(basename $1 .mmpz) | sed 's/^lmms\.//g').wav"
 }; export -f render_audio_lmms
 
 #alldownto2x () {
