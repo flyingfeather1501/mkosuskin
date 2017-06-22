@@ -113,10 +113,10 @@ resize_resizeto () {
 }; export -f resize_resizeto
 
 ## prepare
-BOLD=$(tput bold)
-NORMAL=$(tput sgr0)
-RED=$(tput setaf 1)
-MAGENTA=$(tput setaf 5)
+export BOLD=$(tput bold)
+export NORMAL=$(tput sgr0)
+export RED=$(tput setaf 1)
+export MAGENTA=$(tput setaf 5)
 trap cleanup INT
 case $1 in
   -r)
@@ -135,9 +135,9 @@ case $1 in
   *)
     revision=$(date +%Y%m%d%H%M%S%z)
 esac
-skinname="ReZero Script"
-outname="${skinname} ${revision}"
-projectroot="$(pwd)"
+export skinname="ReZero Script"
+export outname="${skinname} ${revision}"
+export projectroot="$(pwd)"
 mkdir -p "$projectroot"/out/"$outname"
 
 cd "$projectroot"/src/
