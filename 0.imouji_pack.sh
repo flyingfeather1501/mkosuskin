@@ -107,8 +107,8 @@ resize_resizeto () {
   orig_file="$1"
   target_file="$(basename $1 _resizeto"$size".png).png"
   size=$(echo $orig_file | cut -d'_' -f 2 | sed 's/resizeto//g; s/\.png//')
-  #convert -resize $size $1 "$(basename $1 _resizeto"$size".png).png"
-  vipsthumbnail --size="$size" -o $target_file $orig_file
+  convert -resize $size $orig_file $target_file
+  #vipsthumbnail --size="$size" -o $target_file $orig_file
   rm $1
 }; export -f resize_resizeto
 
