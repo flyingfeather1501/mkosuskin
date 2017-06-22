@@ -1,4 +1,6 @@
 #!/bin/bash
+## Fancy way to render an osu skin.
+## Requires: blender, lmms, p7zip, parallel, vips, imagemagick
 
 ## functions
 
@@ -94,15 +96,19 @@ resize_at () {
       ;;
   esac
     echo resizing $orig_file...
-  convert -resize $(python -c "print('{0:.2f}'.format((${target_size} / ${orig_size} * 100)) + '%')") $orig_file $target_file
+  #convert -resize $(python -c "print('{0:.2f}'.format(${target_size} / ${orig_size}))") $orig_file $target_file
+  vips resize $orig_file $target_file $(python -c "print('{0:.2f}'.format(${target_size} / ${orig_size}))")
   [ ! "$orig_size" -eq 2 ] && rm $orig_file
 }; export -f resize_at
 
 resize_resizeto () {
   echo resizing $1...
   # name the files as ${name}_resizeto${x}x${y}.png
-  size=$(echo $1 | cut -d'_' -f 2 | sed 's/resizeto//g; s/\.png//')
-  convert -resize $size $1 "$(basename $1 _resizeto"$size".png).png"
+  orig_file="$1"
+  target_file="$(basename $1 _resizeto"$size".png).png"
+  size=$(echo $orig_file | cut -d'_' -f 2 | sed 's/resizeto//g; s/\.png//')
+  #convert -resize $size $1 "$(basename $1 _resizeto"$size".png).png"
+  vipsthumbnail --size="$size" -o $target_file $orig_file
   rm $1
 }; export -f resize_resizeto
 
