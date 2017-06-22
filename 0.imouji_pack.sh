@@ -32,18 +32,18 @@ cleanup () {
 }
 
 render_normal () {
-  echoreport rendering "$i"...
-  blender -b "$1" -a
+  echoreport rendering "$1"...
+  blender -b "$1" -a >/dev/null
 }; export -f render_normal
 
 render_marker () {
   echoreport rendering "$1" with render_marker.py ...
-  blender -b "$1" --python "$projectroot"/utils/render_marker.py
+  blender -b "$1" --python "$projectroot"/utils/render_marker.py >/dev/null
 }; export -f render_marker
 
 render_audio_lmms () {
   echoreport rendering audio "$1" ...
-  lmms --format wav -r "$1"
+  lmms --format wav -r "$1" >/dev/null
   mv "$(basename $1 .mmpz)".wav "$(echo $(basename $1 .mmpz) | sed 's/^lmms\.//g').wav"
 }; export -f render_audio_lmms
 
