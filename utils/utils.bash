@@ -44,7 +44,7 @@ autotrim () {
   echoreport trimming totrim images...
   convert -trim +repage $1 "$(basename $1 totrim.png)".png
   rm $1
-}
+}; export -f autotrim
 
 resize_at () {
   # resize_at <n|t> <stst@Nx.png>
