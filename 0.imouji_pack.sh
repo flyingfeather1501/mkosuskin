@@ -38,7 +38,8 @@ while getopts "r:dh" opt; do
 done
 
 export outname="${skinname} ${revision}"
-mkdir -p "$build_dir"/"$outname"
+export out_dir="$build_dir"/"$outname"
+mkdir -p "$out_dir"
 
 ## prepare
 echoreport cleaning up...
@@ -84,10 +85,10 @@ cp button-left.png button-right.png
 ## package
 cd "$projectroot"
 echoreport moving rendered files into output folder...
-mv "$source_dir"/*.png "$build_dir"/"$outname"/
-mv "$source_dir"/*.wav "$build_dir"/"$outname"/
-cp audio/*.ogg "$build_dir"/"$outname"/ # for external / prerecorded audio files
-cp external/* "$build_dir"/"$outname"/ >/dev/null 2>/dev/null
+mv "$source_dir"/*.png "$out_dir"/
+mv "$source_dir"/*.wav "$out_dir"/
+cp audio/*.ogg "$out_dir"/ # for external / prerecorded audio files
+cp external/* "$out_dir"/ >/dev/null 2>/dev/null
 sed "s/NNNNAAAAMMMMEEEE/$skinname $revision/g" src/skin.ini > out/"$outname"/skin.ini
 
 echoreport packaging output folder into osk file...
