@@ -18,7 +18,7 @@ echoerror () {
 cleanup () {
   # cleanup [aborted]
   [ "$1" == "aborted" ] && echoerror aborted by user, cleaning up...
-  rm "$source_dir"/*.png 2>/dev/null
+  rm "$source_dir"/*.{png,jpg,wav} 2>/dev/null
   for i in "$build_dir"/"$outname"{,.osk,.zip}; do
     [ -f "$i" ] && rm "$i" -r
   done
