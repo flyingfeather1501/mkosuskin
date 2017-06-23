@@ -31,7 +31,9 @@ while getopts "r:dh" opt; do
     h)
       exithelp 0
       ;;
-    *)revision=$(date +%Y%m%d%H%M%S%z)
+    *)
+      revision=$(date +%Y%m%d%H%M%S%z)
+      ;;
   esac
 done
 
