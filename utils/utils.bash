@@ -42,7 +42,7 @@ render_audio_lmms () {
 
 autotrim () {
   echoreport trimming totrim images...
-  convert -trim +repage $1 "$(basename $1 totrim.png).png"
+  convert -trim +repage $1 "$(basename $1 totrim.png)".png
   rm $1
 }
 
