@@ -85,6 +85,16 @@ cp button-left.png button-right.png
 ## package
 cd "$projectroot"
 echoreport moving rendered files into output folder...
+
+#for i in "$source_dir"/sub.*; do
+#  newsub="$out_dir"/$(echo $i | sed s/sub\.//g)
+#  mkdir "$newsub"
+#  # move files containing neither blend nor mmpz to newsub
+#  mv "$(find "$i" | awk '!/blend/ && !/mmpz/')" "$newsub"/
+#  # copy txt files to newsub
+#  cp "$(find "$i" | grep .txt)" "newsub"/
+#done
+
 mv "$source_dir"/*.png "$out_dir"/
 mv "$source_dir"/*.wav "$out_dir"/
 cp audio/*.ogg "$out_dir"/ # for external / prerecorded audio files
