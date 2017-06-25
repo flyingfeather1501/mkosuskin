@@ -21,7 +21,7 @@ export source_dir="$projectroot"/src # .blend, .mmpz, .svg, etc.
 source "$utils_dir"/utils.bash
 
 ## get options
-while getopts "r:dhe" opt; do
+while getopts "r:dho" opt; do
   case $opt in
     r)
       revision="$OPTARG"
@@ -32,7 +32,7 @@ while getopts "r:dhe" opt; do
     h)
       exithelp 0
       ;;
-    e)
+    o)
       use_override=1
       ;;
     *)
