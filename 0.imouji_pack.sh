@@ -21,7 +21,7 @@ export source_dir="$projectroot"/src # .blend, .mmpz, .svg, etc.
 source "$utils_dir"/utils.bash
 
 ## get options
-while getopts "r:dh" opt; do
+while getopts "r:dhe" opt; do
   case $opt in
     r)
       revision="$OPTARG"
@@ -31,6 +31,9 @@ while getopts "r:dh" opt; do
       ;;
     h)
       exithelp 0
+      ;;
+    e)
+      use_override=1
       ;;
     *)
       revision=$(date +%Y%m%d%H%M%S%z)
@@ -101,7 +104,7 @@ mv "$source_dir"/*.png "$out_dir"/
 mv "$source_dir"/*.wav "$out_dir"/
 cp "$source_dir"/copy/* "$out_dir"/
 
-cp external/* "$out_dir"/ >/dev/null 2>/dev/null
+[ "$use_override" == 1 ] && cp override/* "$out_dir"/ >/dev/null 2>/dev/null
 sed "s/NNNNAAAAMMMMEEEE/$skinname $revision/g" src/skin.ini > out/"$outname"/skin.ini
 
 echoreport packaging output folder into osk file...

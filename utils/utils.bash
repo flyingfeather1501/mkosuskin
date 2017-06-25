@@ -1,8 +1,9 @@
 exithelp () {
-  echo "Usage: $(basename $0) [-r REVISION | -d] [-h|--help]"
+  echo "Usage: $(basename $0) [-r REVISION | -d] [-o] [-h|--help]"
   echo "Arguments:"
   echo " -r REVISION  specify a revision"
   echo " -d           revision=dev"
+  echo " -o           use override/"
   echo " -h           print help (this message)"
   exit $1
 }

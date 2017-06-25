@@ -1,6 +1,6 @@
 *.blend1
 out/
-external/
+override/
 src/*.png
 *.swp
 .directory
