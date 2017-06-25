@@ -1,6 +1,7 @@
 #!/bin/bash
 ## Fancy way to render an osu skin.
 ## Requires: blender, lmms, p7zip, parallel, vips, imagemagick
+export skinname="ReZero Script"
 
 ## initialize
 trap 'cleanup aborted; exit 1' INT
@@ -12,10 +13,10 @@ export RED=$(tput setaf 1)
 export MAGENTA=$(tput setaf 5)
 
 export projectroot="$(pwd)"
+export assets_dir="$projectroot"/assets # eg. empty.png
 export utils_dir="$projectroot"/utils # render_marker, build_functions, etc.
 export build_dir="$projectroot"/out # where each version's output sits
 export source_dir="$projectroot"/src # .blend, .mmpz, .svg, etc.
-export skinname="ReZero Script"
 
 source "$utils_dir"/utils.bash
 
@@ -58,7 +59,7 @@ star2.png)
 
 ### empties
 echoreport copying empty image template to images...
-parallel 'cp empty_image' ::: ${empties[*]}
+parallel cp "$assets_dir"/empty.png ::: ${empties[*]}
 
 parallel render_python {} "$utils_dir"/render_marker.py ::: rendermarker.*.blend
 parallel render_normal ::: rendernormal.*.blend
@@ -66,6 +67,7 @@ parallel render_audio_lmms ::: lmms.*.mmpz
 
 ## post processing
 echoreport resizing score-dot and score-comma...
+# TODO: autocrop
 for i in score-{dot,comma}@2xtmp.png; do
   [ ! -f $i ] && continue
   convert -crop 20x84+14+0 $i "$(basename $i @2xtmp.png)@2x.png"
@@ -97,7 +99,8 @@ echoreport moving rendered files into output folder...
 
 mv "$source_dir"/*.png "$out_dir"/
 mv "$source_dir"/*.wav "$out_dir"/
-cp audio/*.ogg "$out_dir"/ # for external / prerecorded audio files
+cp "$source_dir"/copy/* "$out_dir"/
+
 cp external/* "$out_dir"/ >/dev/null 2>/dev/null
 sed "s/NNNNAAAAMMMMEEEE/$skinname $revision/g" src/skin.ini > out/"$outname"/skin.ini
 
