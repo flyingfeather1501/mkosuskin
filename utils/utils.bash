@@ -9,11 +9,11 @@ exithelp () {
 }
 
 echoreport () {
-  echo ${BOLD}${MAGENTA}"<$0> "${NORMAL}${BOLD}"$*"${NORMAL}
+  echo ${BOLD}${MAGENTA}"<${FUNCNAME[1]}> "${NORMAL}${BOLD}"$*"${NORMAL}
 }; export -f echoreport
 
 echoerror () {
-  echo ${BOLD}${MAGENTA}"<$0> "${RED}${BOLD}"$*"${NORMAL} 1>&2
+  echo ${BOLD}${MAGENTA}"<${FUNCNAME[1]}> "${RED}${BOLD}"$*"${NORMAL} 1>&2
 }; export -f echoerror
 
 cleanup () {
