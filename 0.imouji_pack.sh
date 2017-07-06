@@ -65,11 +65,11 @@ echoreport copying empty image template to images...
 parallel cp "$assets_dir"/empty.png ::: ${empties[*]}
 
 exists? rendermarker.*.blend && \
-  parallel render_python {} "$utils_dir"/render_marker.py ::: rendermarker.*.blend
+  parallel render_blender_py {} "$utils_dir"/render_marker.py ::: rendermarker.*.blend
 exists? rendernormal.*.blend && \
-  parallel render_normal ::: rendernormal.*.blend
+  parallel render_blender ::: rendernormal.*.blend
 exists? lmms.*.mmpz && \
-  parallel render_audio_lmms ::: lmms.*.mmpz
+  parallel render_lmms ::: lmms.*.mmpz
 
 ## post processing
 echoreport resizing score-dot and score-comma...

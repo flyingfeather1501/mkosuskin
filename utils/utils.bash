@@ -40,21 +40,21 @@ nameparse () {
   fi
 }; export -f nameparse
 
-render_normal () {
+render_blender () {
   echoreport rendering "$1"...
   blender -b "$1" -a >/dev/null
-}; export -f render_normal
+}; export -f render_blender
 
-render_python () {
+render_blender_py () {
   echoreport rendering "$1" with python script "$(basename $2)" ...
   blender -b "$1" --python "$2" >/dev/null
-}; export -f render_python
+}; export -f render_blender_py
 
-render_audio_lmms () {
+render_lmms () {
   echoreport rendering audio "$1" ...
   lmms --format wav -r "$1" >/dev/null
   mv "$(basename $1 .mmpz)".wav "$(echo $(basename $1 .mmpz) | sed 's/^lmms\.//g').wav"
-}; export -f render_audio_lmms
+}; export -f render_lmms
 
 autotrim () {
   echoreport trimming $1 ...
