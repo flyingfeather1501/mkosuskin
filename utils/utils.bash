@@ -25,6 +25,17 @@ cleanup () {
   done
 }
 
+nameparse () {
+  delim="_"
+  [ -z "$3" ] || delim="$3"
+  if [ "$4" == "keep" ]; then
+    parallel "echo $1 | cut -d${delim} -f {} | grep $2" ::: {1..4}
+  else
+    parallel "echo $1 | cut -d${delim} -f {} | grep $2" ::: {1..4} \
+      | sed "s/$2//g; s/.png//g"
+  fi
+}; export -f nameparse
+
 render_normal () {
   echoreport rendering "$1"...
   blender -b "$1" -a >/dev/null
