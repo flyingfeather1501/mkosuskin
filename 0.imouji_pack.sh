@@ -68,6 +68,8 @@ exists? rendermarker.*.blend && \
   parallel render_blender_py {} "$utils_dir"/render_marker.py ::: rendermarker.*.blend
 exists? rendernormal.*.blend && \
   parallel render_blender ::: rendernormal.*.blend
+exists? *.svg && \
+  parallel render_svg ::: *.svg
 exists? lmms.*.mmpz && \
   parallel render_lmms ::: lmms.*.mmpz
 

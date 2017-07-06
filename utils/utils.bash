@@ -56,6 +56,12 @@ render_lmms () {
   mv "$(basename $1 .mmpz)".wav "$(echo $(basename $1 .mmpz) | sed 's/^lmms\.//g').wav"
 }; export -f render_lmms
 
+render_svg () {
+  # only does the converting, size should be set in the svg or with _resizeto
+  echoreport converting "$1" into png ...
+  inkscape -z "$1" -e "$(basename $1 .svg)".png
+}; export -f render_svg
+
 autotrim () {
   echoreport trimming $1 ...
   convert -trim +repage $1 "$(basename $1 totrim.png)".png
