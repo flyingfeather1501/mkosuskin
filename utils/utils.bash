@@ -1,3 +1,7 @@
+exists? () {
+  find "$1" >/dev/null 2>/dev/null
+}; export -f exists?
+
 exithelp () {
   echo "Usage: $(basename $0) [-r REVISION | -d] [-o] [-h|--help]"
   echo "Arguments:"

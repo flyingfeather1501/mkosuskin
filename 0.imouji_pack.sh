@@ -64,9 +64,12 @@ star2.png)
 echoreport copying empty image template to images...
 parallel cp "$assets_dir"/empty.png ::: ${empties[*]}
 
-parallel render_python {} "$utils_dir"/render_marker.py ::: rendermarker.*.blend
-parallel render_normal ::: rendernormal.*.blend
-parallel render_audio_lmms ::: lmms.*.mmpz
+exists? rendermarker.*.blend && \
+  parallel render_python {} "$utils_dir"/render_marker.py ::: rendermarker.*.blend
+exists? rendernormal.*.blend && \
+  parallel render_normal ::: rendernormal.*.blend
+exists? lmms.*.mmpz && \
+  parallel render_audio_lmms ::: lmms.*.mmpz
 
 ## post processing
 echoreport resizing score-dot and score-comma...
@@ -76,11 +79,11 @@ for i in score-{dot,comma}@2xtmp.png; do
   convert -crop 20x84+14+0 $i "$(basename $i @2xtmp.png)@2x.png"
   rm $i
 done
-parallel autotrim ::: *totrim.png
+exists? *totrim.png && parallel autotrim ::: *totrim.png
 
 ### resize
 echoreport resizing other images...
-parallel resize_resizeto ::: *resizeto*.png
+exists? *resizeto*.png && parallel resize_resizeto ::: *resizeto*.png
 parallel "resize_at n" ::: *@*.png
 parallel "resize_at t" ::: *@*.png
 
