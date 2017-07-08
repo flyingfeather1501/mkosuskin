@@ -62,6 +62,14 @@ render_svg () {
   inkscape -z "$1" -e "$(basename $1 .svg)".png
 }; export -f render_svg
 
+autocrop () {
+  echoreport cropping $1 ...
+  crop_dim=$(nameparse "$1" tocrop "_")
+  target_file=$(echo $1 | sed s/_tocrop$crop_dim//g)
+  convert -crop "$crop_dim" "$1" "$target_file"
+  rm $1
+}; export -f autocrop
+
 autotrim () {
   echoreport trimming $1 ...
   convert -trim +repage $1 "$(basename $1 totrim.png)".png
