@@ -40,6 +40,18 @@ nameparse () {
   fi
 }; export -f nameparse
 
+render_empty_png () {
+  # render_empty_img empty.filename.something
+  # -> contents of filename.something = empty.png
+  cp "$assets_dir"/empty.png $(echo $1 | sed s/empty\.//g)
+}; export -f render_empty_png
+
+render_empty_wav () {
+  # render_empty_img empty.filename.something
+  # -> contents of filename.something = empty.png
+  cp "$assets_dir"/empty.wav $(echo $1 | sed s/empty\.//g)
+}; export -f render_empty_wav
+
 render_blender () {
   echoreport rendering "$1"...
   blender -b "$1" -a >/dev/null
@@ -63,6 +75,7 @@ render_svg () {
 }; export -f render_svg
 
 autocrop () {
+  # needs testing
   echoreport cropping $1 ...
   crop_dim=$(nameparse "$1" tocrop "_")
   target_file=$(echo $1 | sed s/_tocrop$crop_dim//g)

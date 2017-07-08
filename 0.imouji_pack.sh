@@ -13,7 +13,7 @@ export RED=$(tput setaf 1)
 export MAGENTA=$(tput setaf 5)
 
 export projectroot="$(pwd)"
-export assets_dir="$projectroot"/assets # eg. empty.png
+export assets_dir="$projectroot"/utils/assets # eg. empty.png
 export utils_dir="$projectroot"/utils # render_marker, build_functions, etc.
 export build_dir="$projectroot"/out # where each version's output sits
 export source_dir="$projectroot"/src # .blend, .mmpz, .svg, etc.
@@ -62,6 +62,10 @@ star2.png)
 
 ### empties
 echoreport copying empty image template to images...
+exists? empty.*.png && \
+  parallel render_empty_png ::: empty.*.png
+exists? empty.*.wav && \
+  parallel render_empty_wav ::: empty.*.wav
 parallel cp "$assets_dir"/empty.png ::: ${empties[*]}
 
 exists? rendermarker.*.blend && \
