@@ -3,8 +3,9 @@ exists? () {
 }; export -f exists?
 
 exithelp () {
-  echo "Usage: $(basename $0) [-r REVISION | -d] [-o] [-h|--help]"
+  echo "Usage: $(basename $0) <-p FOLDER> [-r REVISION | -d] [-o] [-h|--help]"
   echo "Arguments:"
+  echo " -p FOLDER    specify folder to render as a skin"
   echo " -r REVISION  specify a revision"
   echo " -d           revision=dev"
   echo " -o           use override/"

@@ -16,13 +16,15 @@ export projectroot="$(pwd)"
 export assets_dir="$projectroot"/utils/assets # eg. empty.png
 export utils_dir="$projectroot"/utils # render_marker, build_functions, etc.
 export build_dir="$projectroot"/out # where each version's output sits
-export source_dir="$projectroot"/src # .blend, .mmpz, .svg, etc.
 
 source "$utils_dir"/utils.bash
 
 ## get options
-while getopts "r:dho" opt; do
+while getopts "p:r:dho" opt; do
   case $opt in
+    p)
+      source_dir="$OPTARG" # get the source dir from here, splitting script and skin
+    ;;
     r)
       revision="$OPTARG"
       ;;
@@ -40,6 +42,8 @@ while getopts "r:dho" opt; do
       ;;
   esac
 done
+
+[ "$source_dir" == "" ] && exithelp 1
 
 export outname="${skinname} ${revision}"
 export out_dir="$build_dir"/"$outname"
