@@ -2,6 +2,6 @@
 *.bak
 out/
 override/
-src/*.png
 *.swp
 .directory
+skin.*
