@@ -10,7 +10,7 @@ scn = bpy.context.scene
 output_path = scn.render.filepath
 
 # iterate through markers and render
-for k, m in scn.timeline_markers.items():  
+for k, m in scn.timeline_markers.items():
     frame = m.frame
     marker_name = m.name
     scn.frame_set(frame)
