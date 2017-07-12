@@ -118,7 +118,7 @@ mv "$source_dir"/*.wav "$out_dir"/
 cp "$source_dir"/copy/* "$out_dir"/
 
 [ "$use_override" == 1 ] && cp override/* "$out_dir"/ >/dev/null 2>/dev/null
-sed "s/NNNNAAAAMMMMEEEE/$skinname $revision/g" src/skin.ini > out/"$outname"/skin.ini
+sed "s/NNNNAAAAMMMMEEEE/$skinname $revision/g" "$source_dir"/skin.ini > out/"$outname"/skin.ini
 
 echoreport packaging output folder into osk file...
 cd "$build_dir"
