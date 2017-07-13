@@ -97,9 +97,6 @@ exists? *resizeto*.png && parallel resize_resizeto ::: *resizeto*.png
 parallel "resize_at n" ::: *@*.png
 parallel "resize_at t" ::: *@*.png
 
-cp button-left.png button-middle.png
-cp button-left.png button-right.png
-
 ## package
 cd "$projectroot"
 echoreport moving rendered files into output folder...
