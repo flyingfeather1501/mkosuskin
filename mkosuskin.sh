@@ -16,6 +16,7 @@ export projectroot="$(pwd)"
 export assets_dir="$projectroot"/utils/assets # eg. empty.png
 export utils_dir="$projectroot"/utils # render_marker, build_functions, etc.
 export build_dir="$projectroot"/out # where each version's output sits
+export cache_dir="$projectroot"/cache # store previously rendered stuff
 
 source "$utils_dir"/utils.bash
 
@@ -24,7 +25,7 @@ while getopts "p:r:dho" opt; do
   case $opt in
     p)
       source_dir="$OPTARG" # get the source dir from here, splitting script and skin
-    ;;
+      ;;
     r)
       revision="$OPTARG"
       ;;
@@ -48,10 +49,24 @@ done
 export outname="${skinname} ${revision}"
 export out_dir="$build_dir"/"$outname"
 mkdir -p "$out_dir"
+mkdir -p "$cache_dir"
 
 ## prepare
 echoreport cleaning up...
 cleanup
+
+files_to_render="$(sha256sum --check --quiet "$projectroot"/hashes 2>/dev/null \
+                   | cut -d':' -f 1; # returns changed files
+                   diff <(cat "$projectroot"/hashes 2>/dev/null \
+                          | cut -d' ' -f 3 \
+                          | sed "s|.*$source_dir||g" \
+                          | sort) \
+                        <(find "$source_dir" 2>/dev/null \
+                          | grep -v "\.git" \
+                          | sed "s|.*$source_dir||g" \
+                          | sort) \
+                   | grep '>' \
+                   | sed s/'> '//g)" # returns unhashed files
 
 cd "$source_dir"
 echoreport start rendering "$outname"...
@@ -72,14 +87,23 @@ exists? empty.*.wav && \
   parallel render_empty_wav ::: empty.*.wav
 parallel cp "$assets_dir"/empty.png ::: ${empties[*]}
 
-exists? rendermarker.*.blend && \
-  parallel render_blender_py {} "$utils_dir"/render_marker.py ::: rendermarker.*.blend
-exists? rendernormal.*.blend && \
-  parallel render_blender ::: rendernormal.*.blend
-exists? *.svg && \
-  parallel render_svg ::: *.svg
-exists? lmms.*.mmpz && \
-  parallel render_lmms ::: lmms.*.mmpz
+i="$(echo "$files_to_render" | grep 'rendermarker' | grep 'blend$')"
+exists? $i && \
+  parallel render_blender_py {/} "$utils_dir"/render_marker.py ::: $i
+
+i="$(echo "$files_to_render" | grep 'rendernormal' | grep 'blend$')"
+exists? $i && \
+  parallel render_blender {/} ::: $i
+
+i="$(echo "$files_to_render" | grep 'svg$')"
+exists? $i && \
+  parallel render_svg {/} ::: $i
+
+i="$(echo "$files_to_render" | grep 'lmms' | grep 'mmpz$')"
+exists? $i && \
+  parallel render_lmms {/} ::: $i
+
+sha256sum "$source_dir"/* > "$projectroot"/hashes 2>/dev/null
 
 ## post processing
 echoreport resizing score-dot and score-comma...
@@ -110,9 +134,11 @@ echoreport moving rendered files into output folder...
 #  cp "$(find "$i" | grep .txt)" "newsub"/
 #done
 
-mv "$source_dir"/*.png "$out_dir"/
-mv "$source_dir"/*.wav "$out_dir"/
-cp "$source_dir"/copy/* "$out_dir"/
+# cp / mv rendered stuff into cache
+mv "$source_dir"/*.{png,wav} "$cache_dir"
+cp "$source_dir"/copy/* "$cache_dir"/
+
+cp "$cache_dir"/* "$out_dir"
 
 [ "$use_override" == 1 ] && cp override/* "$out_dir"/ >/dev/null 2>/dev/null
 sed "s/NNNNAAAAMMMMEEEE/$skinname $revision/g" "$source_dir"/skin.ini > out/"$outname"/skin.ini

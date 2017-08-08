@@ -5,3 +5,5 @@ override/
 *.swp
 .directory
 skin.*
+cache/
+hashes
