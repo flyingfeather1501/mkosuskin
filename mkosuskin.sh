@@ -1,7 +1,7 @@
 #!/bin/bash
 ## Fancy way to render an osu skin.
 ## Requires: blender, lmms, p7zip, parallel, vips, imagemagick
-export skinname="ReZero Script"
+#export skinname="ReZero Script"
 
 ## initialize
 trap 'cleanup aborted; exit 1' INT
@@ -25,6 +25,7 @@ while getopts "p:r:dho" opt; do
   case $opt in
     p)
       source_dir="$OPTARG" # get the source dir from here, splitting script and skin
+      export skinname="$(echo $OPTARG | sed 's+skin\.++; s+/++')"
       ;;
     r)
       revision="$OPTARG"
