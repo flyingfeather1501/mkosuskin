@@ -42,15 +42,15 @@ nameparse () {
 }; export -f nameparse
 
 render_empty_png () {
-  # render_empty_img empty.filename.something
-  # -> contents of filename.something = empty.png
-  cp "$assets_dir"/empty.png $(echo $1 | sed s/empty\.//g)
+  # render_empty_png empties/something.png
+  # -> contents of something.png = empty.png
+  cp "$assets_dir"/empty.png $(echo $1 | sed s+empties/++g)
 }; export -f render_empty_png
 
 render_empty_wav () {
-  # render_empty_img empty.filename.something
-  # -> contents of filename.something = empty.png
-  cp "$assets_dir"/empty.wav $(echo $1 | sed s/empty\.//g)
+  # render_empty_wav empties/something.wav
+  # -> contents of something.wav = empty.wav
+  cp "$assets_dir"/empty.wav $(echo $1 | sed s+empties/++g)
 }; export -f render_empty_wav
 
 render_blender () {

@@ -72,20 +72,20 @@ cd "$source_dir"
 echoreport start rendering "$outname"...
 
 ## render images
-empties=(count{1..3}.png default-{0..9}.png \
-hit300{,g,k}-0.png inputoverlay-background.png lighting.png \
-ranking-graph.png scorebar-bg.png sliderendcircle.png \
-sliderpoint10.png sliderpoint30.png sliderscorepoint.png \
-spinner-bottom.png spinner-clear.png spinner-glow.png spinner-middle.png \
-star2.png)
+#empties=(count{1..3}.png default-{0..9}.png \
+#hit300{,g,k}-0.png inputoverlay-background.png lighting.png \
+#ranking-graph.png scorebar-bg.png sliderendcircle.png \
+#sliderpoint10.png sliderpoint30.png sliderscorepoint.png \
+#spinner-bottom.png spinner-clear.png spinner-glow.png spinner-middle.png \
+#star2.png)
 
 ### empties
 echoreport copying empty image template to images...
-exists? empty.*.png && \
-  parallel render_empty_png ::: empty.*.png
-exists? empty.*.wav && \
-  parallel render_empty_wav ::: empty.*.wav
-parallel cp "$assets_dir"/empty.png ::: ${empties[*]}
+exists? empties/*.png && \
+  parallel render_empty_png ::: empties/*.png
+exists? empties/*.wav && \
+  parallel render_empty_wav ::: empties/*.wav
+#parallel cp "$assets_dir"/empty.png ::: ${empties[*]}
 
 i="$(echo "$files_to_render" | grep 'rendermarker' | grep 'blend$')"
 exists? $i && \
