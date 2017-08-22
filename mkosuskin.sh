@@ -83,9 +83,9 @@ echoreport start rendering "$outname"...
 ### empties
 echoreport copying empty image template to images...
 exists? empties/*.png && \
-  parallel render_empty_png ::: empties/*.png
-exists? empties/*.wav && \
-  parallel render_empty_wav ::: empties/*.wav
+  parallel render_empty ::: "$(find empties/ -iname '*.png' -o -iname '*.wav')"
+#exists? empties/*.wav && \
+#  parallel render_empty_wav ::: empties/*.wav
 #parallel cp "$assets_dir"/empty.png ::: ${empties[*]}
 
 i="$(echo "$files_to_render" | grep 'rendermarker' | grep 'blend$')"
@@ -137,9 +137,10 @@ echoreport moving rendered files into output folder...
 
 # cp / mv rendered stuff into cache
 mv "$source_dir"/*.{png,wav} "$cache_dir"
+mv "$source_dir"/move/* "$cache_dir"/
 cp "$source_dir"/copy/* "$cache_dir"/
 
-cp "$cache_dir"/* "$out_dir"
+cp -r "$cache_dir"/* "$out_dir"
 
 [ "$use_override" == 1 ] && cp override/* "$out_dir"/ >/dev/null 2>/dev/null
 sed "s/NNNNAAAAMMMMEEEE/$skinname $revision/g" "$source_dir"/skin.ini > out/"$outname"/skin.ini

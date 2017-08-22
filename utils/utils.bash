@@ -1,3 +1,7 @@
+#!/bin/bash
+
+# helper functions
+
 exists? () {
   find "$1" >/dev/null 2>/dev/null
 }; export -f exists?
@@ -41,6 +45,13 @@ nameparse () {
   fi
 }; export -f nameparse
 
+# render functions
+
+render_empty () {
+  # render_empty empties/file
+  touch $(echo $1 | sed s|empties/++g)
+}; export -f render_empty
+
 render_empty_png () {
   # render_empty_png empties/something.png
   # -> contents of something.png = empty.png
@@ -75,20 +86,7 @@ render_svg () {
   inkscape -z "$1" -e "$(basename $1 .svg)".png
 }; export -f render_svg
 
-autocrop () {
-  # needs testing
-  echoreport cropping $1 ...
-  crop_dim=$(nameparse "$1" tocrop "_")
-  target_file=$(echo $1 | sed s/_tocrop$crop_dim//g)
-  convert -crop "$crop_dim" "$1" "$target_file"
-  rm $1
-}; export -f autocrop
-
-autotrim () {
-  echoreport trimming $1 ...
-  convert -trim +repage $1 "$(basename $1 totrim.png)".png
-  rm $1
-}; export -f autotrim
+# post process functions
 
 resize_at () {
   # resize_at <n|t> <stst@Nx.png>
@@ -128,3 +126,18 @@ resize_resizeto () {
   #vipsthumbnail --size="$size" -o $target_file $orig_file
   rm $1
 }; export -f resize_resizeto
+
+autocrop () {
+  # needs testing
+  echoreport cropping $1 ...
+  crop_dim=$(nameparse "$1" tocrop "_")
+  target_file=$(echo $1 | sed s/_tocrop$crop_dim//g)
+  convert -crop "$crop_dim" "$1" "$target_file"
+  rm $1
+}; export -f autocrop
+
+autotrim () {
+  echoreport trimming $1 ...
+  convert -trim +repage $1 "$(basename $1 totrim.png)".png
+  rm $1
+}; export -f autotrim
