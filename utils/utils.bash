@@ -49,7 +49,7 @@ nameparse () {
 
 render_empty () {
   # render_empty empties/file
-  touch $(echo $1 | sed s|empties/++g)
+  touch $(echo $1 | sed s+empties/++g)
 }; export -f render_empty
 
 render_empty_png () {
