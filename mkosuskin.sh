@@ -88,11 +88,15 @@ parallel render_empty ::: $(cat empties.txt | tr '\n' ' ')
 
 i="$(echo "$files_to_render" | grep 'rendermarker' | grep 'blend$')"
 exists? $i && \
-  parallel render_blender_py {/} "$utils_dir"/render_marker.py ::: $i
+  for file in $i; do
+  render_blender_py $(basename $file) "$utils_dir"/render_marker.py
+  done
 
 i="$(echo "$files_to_render" | grep 'rendernormal' | grep 'blend$')"
 exists? $i && \
-  parallel render_blender {/} ::: $i
+  for file in $i; do
+  render_blender $(basename $file)
+  done
 
 i="$(echo "$files_to_render" | grep 'svg$')"
 exists? $i && \
