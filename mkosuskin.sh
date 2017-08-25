@@ -140,7 +140,7 @@ echoreport moving rendered files into output folder...
 # cp / mv rendered stuff into cache
 mv "$source_dir"/*.{png,wav} "$cache_dir"
 mv "$source_dir"/move/* "$cache_dir"/
-cp "$source_dir"/copy/* "$cache_dir"/
+cp -r "$source_dir"/copy/* "$cache_dir"/
 
 cp -r "$cache_dir"/* "$out_dir"
 
