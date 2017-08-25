@@ -82,10 +82,8 @@ echoreport start rendering "$outname"...
 
 ### empties
 echoreport copying empty image template to images...
-exists? empties/*.png && \
-  parallel render_empty ::: "$(find empties/ -iname '*.png' -o -iname '*.wav')"
-#exists? empties/*.wav && \
-#  parallel render_empty_wav ::: empties/*.wav
+parallel render_empty ::: $(cat empties.txt | tr '\n' ' ')
+
 #parallel cp "$assets_dir"/empty.png ::: ${empties[*]}
 
 i="$(echo "$files_to_render" | grep 'rendermarker' | grep 'blend$')"

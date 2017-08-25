@@ -49,19 +49,20 @@ nameparse () {
 
 render_empty () {
   # render_empty empties/file
-  touch $(echo $1 | sed s+empties/++g)
+  ext=${1##*.} # '##'->greedy front trim. => greedily trim from beginning matching all until '.'
+  cp "$assets_dir"/empty.$ext "$1"
 }; export -f render_empty
 
 render_empty_png () {
   # render_empty_png empties/something.png
   # -> contents of something.png = empty.png
-  cp "$assets_dir"/empty.png $(echo $1 | sed s+empties/++g)
+  cp "$assets_dir"/empty.png "$1"
 }; export -f render_empty_png
 
 render_empty_wav () {
   # render_empty_wav empties/something.wav
   # -> contents of something.wav = empty.wav
-  cp "$assets_dir"/empty.wav $(echo $1 | sed s+empties/++g)
+  cp "$assets_dir"/empty.wav "$1"
 }; export -f render_empty_wav
 
 render_blender () {
