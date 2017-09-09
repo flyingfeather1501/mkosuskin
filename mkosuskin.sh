@@ -111,11 +111,12 @@ sha256sum "$source_dir"/* > "$projectroot"/hashes 2>/dev/null
 ## post processing
 echoreport resizing score-dot and score-comma...
 # TODO: autocrop
-for i in score-{dot,comma}@2xtmp.png; do
-  [ ! -f $i ] && continue
-  convert -crop 20x84+14+0 $i "$(basename $i @2xtmp.png)@2x.png"
-  rm $i
-done
+#for i in score-{dot,comma}@2xtmp.png; do
+#  [ ! -f $i ] && continue
+#  convert -crop 20x84+14+0 $i "$(basename $i @2xtmp.png)@2x.png"
+#  rm $i
+#done
+exists? *tocrop*.png && parallel autocrop ::: *tocrop*.png
 exists? *totrim.png && parallel autotrim ::: *totrim.png
 
 ### resize
