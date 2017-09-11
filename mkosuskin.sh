@@ -12,6 +12,7 @@ export NORMAL=$(tput sgr0)
 export RED=$(tput setaf 1)
 export MAGENTA=$(tput setaf 5)
 
+export language=()
 export projectroot="$(pwd)"
 export assets_dir="$projectroot"/utils/assets # eg. empty.png
 export utils_dir="$projectroot"/utils # render_marker, build_functions, etc.
@@ -21,7 +22,7 @@ export cache_dir="$projectroot"/cache # store previously rendered stuff
 source "$utils_dir"/utils.bash
 
 ## get options
-while getopts "p:r:dho" opt; do
+while getopts "p:r:dl:ho" opt; do
   case $opt in
     p)
       source_dir="$OPTARG" # get the source dir from here, splitting script and skin
@@ -35,6 +36,9 @@ while getopts "p:r:dho" opt; do
       ;;
     h)
       exithelp 0
+      ;;
+    l)
+      language+=("$OPTARG")
       ;;
     o)
       use_override=1
@@ -86,25 +90,46 @@ parallel render_empty ::: $(cat empties.txt | tr '\n' ' ')
 
 #parallel cp "$assets_dir"/empty.png ::: ${empties[*]}
 
-i="$(echo "$files_to_render" | grep 'rendermarker' | grep 'blend$')"
+i="$(echo "$files_to_render" | grep 'rendermarker' | grep 'blend$' | awk '!/☆/')"
 exists? $i && \
   for file in $i; do
   render_blender_py $(basename $file) "$utils_dir"/render_marker.py
   done
 
-i="$(echo "$files_to_render" | grep 'rendernormal' | grep 'blend$')"
+i="$(echo "$files_to_render" | grep 'rendernormal' | grep 'blend$' | awk '!/☆/')"
 exists? $i && \
   for file in $i; do
   render_blender $(basename $file)
   done
 
-i="$(echo "$files_to_render" | grep 'svg$')"
+i="$(echo "$files_to_render" | grep 'svg$' | awk '!/☆/')"
 exists? $i && \
   parallel render_svg {/} ::: $i
 
-i="$(echo "$files_to_render" | grep 'lmms' | grep 'mmpz$')"
+i="$(echo "$files_to_render" | grep 'lmms' | grep 'mmpz$' | awk '!/☆/')"
 exists? $i && \
   parallel render_lmms {/} ::: $i
+
+for x in ${language[@]}; do
+  specific_to_current="$(echo "$files_to_render" | grep "☆$x")"
+
+  if exists? $(echo "$specific_to_current" | grep 'rendernormal' | grep 'blend$'); then
+    for file in $(echo "$specific_to_current" | grep 'rendernormal' | grep 'blend$'); do
+      render_blender $(basename $file)
+    done
+  fi
+  if exists? $(echo "$specific_to_current" | grep 'rendermarker' | grep 'blend$'); then
+    for file in $(echo "$specific_to_current" | grep 'rendermarker' | grep 'blend$'); do
+      render_blender_py $(basename $file) "$utils_dir"/render_marker.py
+    done
+  fi
+  if exists? $(echo "$specific_to_current" | grep 'svg$'); then
+    parallel render_svg {/} ::: $(echo "$specific_to_current" | grep 'svg$')
+  fi
+  if exists? $(echo "$files_to_render" | grep 'lmms' | grep 'mmpz$'); then
+    parallel render_lmms {/} ::: $(echo "$files_to_render" | grep 'lmms' | grep 'mmpz$')
+  fi
+done
 
 sha256sum "$source_dir"/* > "$projectroot"/hashes 2>/dev/null
 
