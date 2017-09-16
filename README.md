@@ -1,5 +1,6 @@
 ## License
 Copyright © 2017 Kisaragi Hiu <flyingfeather1501@gmail.com>
+
 This work is Free. you can redistribute it and/or modify it under the terms of the Do What The Fuck You Want To Public License, Version 2, as published by Sam Hocevar. A copy of the license is shown below.
 ```
         DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE 
