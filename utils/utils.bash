@@ -122,7 +122,7 @@ resize_resizeto () {
   # name the files as ${name}_resizeto${x}x${y}.png
   orig_file="$1"
   size=$(echo $orig_file | cut -d'_' -f 2 | sed 's/resizeto//g; s/\.png//')
-  target_file="$(basename $orig_file _resizeto"$size".png).png"
+  target_file="$(echo $orig_file | sed s/_resizeto$size//g)"
   convert -resize $size $orig_file $target_file
   #vipsthumbnail --size="$size" -o $target_file $orig_file
   rm $1
@@ -132,13 +132,13 @@ autocrop () {
   # needs testing
   echoreport cropping $1 ...
   crop_dim=$(nameparse "$1" tocrop "_")
-  target_file=$(echo $1 | sed s/_tocrop$crop_dim//g)
+  target_file="$(echo $1 | sed s/_tocrop$crop_dim//g)"
   convert -crop "$crop_dim" "$1" "$target_file"
   rm $1
 }; export -f autocrop
 
 autotrim () {
   echoreport trimming $1 ...
-  convert -trim +repage $1 "$(basename $1 totrim.png)".png
+  convert -trim +repage $1 "$(echo $1 | sed 's/totrim\.png/.png/g')"
   rm $1
 }; export -f autotrim

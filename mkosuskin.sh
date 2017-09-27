@@ -60,19 +60,6 @@ mkdir -p "$cache_dir"
 echoreport cleaning up...
 cleanup
 
-files_to_render="$(sha256sum --check --quiet "$projectroot"/hashes 2>/dev/null \
-                   | cut -d':' -f 1; # returns changed files
-                   diff <(cat "$projectroot"/hashes 2>/dev/null \
-                          | cut -d' ' -f 3 \
-                          | sed "s|.*$source_dir||g" \
-                          | sort) \
-                        <(find "$source_dir" 2>/dev/null \
-                          | grep -v "\.git" \
-                          | sed "s|.*$source_dir||g" \
-                          | sort) \
-                   | grep '>' \
-                   | sed s/'> '//g)" # returns unhashed files
-
 cd "$source_dir"
 echoreport start rendering "$outname"...
 
@@ -90,48 +77,49 @@ parallel render_empty ::: $(cat empties.txt | tr '\n' ' ')
 
 #parallel cp "$assets_dir"/empty.png ::: ${empties[*]}
 
-i="$(echo "$files_to_render" | grep 'rendermarker' | grep 'blend$' | awk '!/☆/')"
+i="$(find . -name 'rendermarker.*.blend' -not -name '*☆*')"
 exists? $i && \
   for file in $i; do
   render_blender_py $(basename $file) "$utils_dir"/render_marker.py
   done
 
-i="$(echo "$files_to_render" | grep 'rendernormal' | grep 'blend$' | awk '!/☆/')"
+i="$(find . -name 'rendernormal.*.blend' -not -name '*☆*')"
 exists? $i && \
   for file in $i; do
   render_blender $(basename $file)
   done
 
-i="$(echo "$files_to_render" | grep 'svg$' | awk '!/☆/')"
+i="$(find . -name '*.svg' -not -name '*☆*')"
 exists? $i && \
   parallel render_svg {/} ::: $i
 
-i="$(echo "$files_to_render" | grep 'lmms' | grep 'mmpz$' | awk '!/☆/')"
+i="$(find . -name 'lmms*.mmpz' -not -name '*☆*')"
 exists? $i && \
   parallel render_lmms {/} ::: $i
 
 for x in ${language[@]}; do
-  specific_to_current="$(echo "$files_to_render" | grep "☆$x")"
+  torender_normal="$(find . -name 'rendernormal.*.blend' -name '*☆'"$x"'*')"
+  torender_marker="$(find . -name 'rendermarker.*.blend' -name '*☆'"$x"'*')"
+  torender_lmms="$(find . -name 'lmms.*.mmpz' -name '*☆'"$x"'*')"
+  torender_svg="$(find . -name '*.svg' -name '*☆'"$x"'*')"
 
-  if exists? $(echo "$specific_to_current" | grep 'rendernormal' | grep 'blend$'); then
-    for file in $(echo "$specific_to_current" | grep 'rendernormal' | grep 'blend$'); do
-      render_blender $(basename $file)
+  if exists? $torender_normal; then
+    for file in $torender_normal; do
+      render_blender $file
     done
   fi
-  if exists? $(echo "$specific_to_current" | grep 'rendermarker' | grep 'blend$'); then
-    for file in $(echo "$specific_to_current" | grep 'rendermarker' | grep 'blend$'); do
-      render_blender_py $(basename $file) "$utils_dir"/render_marker.py
+  if exists? $torender_marker; then
+    for file in $torender_marker; do
+        render_blender_py $file "$utils_dir"/render_marker.py
     done
   fi
-  if exists? $(echo "$specific_to_current" | grep 'svg$'); then
-    parallel render_svg {/} ::: $(echo "$specific_to_current" | grep 'svg$')
+  if exists? $torender_svg; then
+    parallel render_svg {/} ::: $torender_svg
   fi
-  if exists? $(echo "$files_to_render" | grep 'lmms' | grep 'mmpz$'); then
-    parallel render_lmms {/} ::: $(echo "$files_to_render" | grep 'lmms' | grep 'mmpz$')
+  if exists? $torender_lmms; then
+    parallel render_lmms {/} ::: $torender_lmms
   fi
 done
-
-sha256sum "$source_dir"/* > "$projectroot"/hashes 2>/dev/null
 
 ## post processing
 echoreport resizing score-dot and score-comma...
@@ -141,12 +129,16 @@ echoreport resizing score-dot and score-comma...
 #  convert -crop 20x84+14+0 $i "$(basename $i @2xtmp.png)@2x.png"
 #  rm $i
 #done
-exists? *tocrop*.png && parallel autocrop ::: *tocrop*.png
-exists? *totrim.png && parallel autotrim ::: *totrim.png
+tocrop=$(find . -name '*tocrop*.png')
+exists? $tocrop && parallel autocrop ::: $tocrop
+
+totrim=$(find . -name '*totrim.png')
+exists? $totrim && parallel autotrim ::: $totrim
 
 ### resize
 echoreport resizing other images...
-exists? *resizeto*.png && parallel resize_resizeto ::: *resizeto*.png
+toresize=$(find . -name '*resizeto*')
+exists? $toresize && parallel resize_resizeto ::: $toresize
 parallel "resize_at n" ::: *@*.png
 parallel "resize_at t" ::: *@*.png
 
