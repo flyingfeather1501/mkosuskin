@@ -77,31 +77,31 @@ parallel render_empty ::: $(cat empties.txt | tr '\n' ' ')
 
 #parallel cp "$assets_dir"/empty.png ::: ${empties[*]}
 
-i="$(find . -name 'rendermarker.*.blend' -not -name '*☆*')"
+i="$(find . -name 'rendermarker.*.blend' -not -name '*%*')"
 exists? $i && \
   for file in $i; do
   render_blender_py $(basename $file) "$utils_dir"/render_marker.py
   done
 
-i="$(find . -name 'rendernormal.*.blend' -not -name '*☆*')"
+i="$(find . -name 'rendernormal.*.blend' -not -name '*%*')"
 exists? $i && \
   for file in $i; do
   render_blender $(basename $file)
   done
 
-i="$(find . -name '*.svg' -not -name '*☆*')"
+i="$(find . -name '*.svg' -not -name '*%*')"
 exists? $i && \
   parallel render_svg {/} ::: $i
 
-i="$(find . -name 'lmms*.mmpz' -not -name '*☆*')"
+i="$(find . -name 'lmms*.mmpz' -not -name '*%*')"
 exists? $i && \
   parallel render_lmms {/} ::: $i
 
 for x in ${language[@]}; do
-  torender_normal="$(find . -name 'rendernormal.*.blend' -name '*☆'"$x"'*')"
-  torender_marker="$(find . -name 'rendermarker.*.blend' -name '*☆'"$x"'*')"
-  torender_lmms="$(find . -name 'lmms.*.mmpz' -name '*☆'"$x"'*')"
-  torender_svg="$(find . -name '*.svg' -name '*☆'"$x"'*')"
+  torender_normal="$(find . -name 'rendernormal.*.blend' -name '*%'"$x"'*')"
+  torender_marker="$(find . -name 'rendermarker.*.blend' -name '*%'"$x"'*')"
+  torender_lmms="$(find . -name 'lmms.*.mmpz' -name '*%'"$x"'*')"
+  torender_svg="$(find . -name '*.svg' -name '*%'"$x"'*')"
 
   if exists? $torender_normal; then
     for file in $torender_normal; do
