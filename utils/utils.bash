@@ -7,13 +7,23 @@ exists? () {
 }; export -f exists?
 
 exithelp () {
-  echo "Usage: $(basename $0) <-p FOLDER> [-r REVISION | -d] [-o] [-h|--help]"
-  echo "Arguments:"
-  echo " -p FOLDER    specify folder to render as a skin"
-  echo " -r REVISION  specify a revision"
-  echo " -d           revision=dev"
-  echo " -o           use override/"
-  echo " -h           print help (this message)"
+  echo "
+Usage: $(basename $0) arguments
+Arguments:
+ -p FOLDER    specify folder to render as a skin
+ -r REVISION  specify a revision
+ -d           revision=dev
+ -o           use override/
+ -m           specify modules
+ -h           print help (this message)
+
+Modules:
+  Define a module by putting '%name' in the filename.
+  A file in a module is only rendered if the module name is given with -m.
+  Example:
+  rendernormal.pause%en.blend -> rendered with $(basename $0) -m en
+  rendermarker.back%tc%en.blend -> rendered with $(basename $0) -m tc or -m en
+"
   exit $1
 }
 

@@ -12,7 +12,7 @@ export NORMAL=$(tput sgr0)
 export RED=$(tput setaf 1)
 export MAGENTA=$(tput setaf 5)
 
-export language=()
+export module=()
 export projectroot="$(pwd)"
 export assets_dir="$projectroot"/utils/assets # eg. empty.png
 export utils_dir="$projectroot"/utils # render_marker, build_functions, etc.
@@ -22,7 +22,7 @@ export cache_dir="$projectroot"/cache # store previously rendered stuff
 source "$utils_dir"/utils.bash
 
 ## get options
-while getopts "p:r:dl:ho" opt; do
+while getopts "p:r:dm:ho" opt; do
   case $opt in
     p)
       source_dir="$OPTARG" # get the source dir from here, splitting script and skin
@@ -37,8 +37,8 @@ while getopts "p:r:dl:ho" opt; do
     h)
       exithelp 0
       ;;
-    l)
-      language+=("$OPTARG")
+    m)
+      module+=("$OPTARG")
       ;;
     o)
       use_override=1
@@ -97,7 +97,7 @@ i="$(find . -name 'lmms*.mmpz' -not -name '*%*')"
 exists? $i && \
   parallel render_lmms {/} ::: $i
 
-for x in ${language[@]}; do
+for x in ${module[@]}; do
   torender_normal="$(find . -name 'rendernormal.*.blend' -name '*%'"$x"'*')"
   torender_marker="$(find . -name 'rendermarker.*.blend' -name '*%'"$x"'*')"
   torender_lmms="$(find . -name 'lmms.*.mmpz' -name '*%'"$x"'*')"
