@@ -80,7 +80,7 @@ parallel render_empty ::: $(cat empties.txt | tr '\n' ' ')
 i="$(find . -name 'rendermarker.*.blend' -not -name '*%*')"
 exists? $i && \
   for file in $i; do
-  render_blender_py $(basename $file) "$utils_dir"/render_marker.py
+  render_blender_marker $(basename $file)
   done
 
 i="$(find . -name 'rendernormal.*.blend' -not -name '*%*')"
@@ -110,7 +110,7 @@ for x in ${module[@]}; do
   fi
   if exists? $torender_marker; then
     for file in $torender_marker; do
-        render_blender_py $file "$utils_dir"/render_marker.py
+        render_blender_marker $file
     done
   fi
   if exists? $torender_svg; then

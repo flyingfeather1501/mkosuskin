@@ -80,10 +80,10 @@ render_blender () {
   blender -b "$1" -a >/dev/null
 }; export -f render_blender
 
-render_blender_py () {
-  echoreport rendering "$1" with python script "$(basename $2)" ...
-  blender -b "$1" --python "$2" >/dev/null
-}; export -f render_blender_py
+render_blender_marker () {
+ echoreport rendering markers in "$1"...
+  blender -b "$1" --python "$utils_dir"/render_marker.py >/dev/null
+}; export -f render_blender_marker
 
 render_lmms () {
   echoreport rendering audio "$1" ...
