@@ -165,8 +165,11 @@ cp -r "$cache_dir"/* "$out_dir"
 [ "$use_override" == 1 ] && cp override/* "$out_dir"/ >/dev/null 2>/dev/null
 sed "s/NNNNAAAAMMMMEEEE/$skinname $revision/g" "$source_dir"/skin.ini > out/"$outname"/skin.ini
 
-echoreport packaging output folder into osk file...
 cd "$build_dir"
+echoreport optimizing png...
+pngquant --skip-if-larger --ext .png --force *.png
+
+echoreport packaging output folder into osk file...
 7z a "$outname".zip "$outname"/
 mv "$outname".zip "$outname".osk
 
