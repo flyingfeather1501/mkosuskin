@@ -1,8 +1,9 @@
 #lang rackjure
 (require json
-         threading)
+         threading
+         "post-process.rkt")
 
-(provide (all-defined-out))
+(provide (all-defined-out)) ; for requiring this file in a repl when developing
 
 ; project-directory : path-string?
 (define project-directory "./skin.Retome")
@@ -10,12 +11,18 @@
 (unless (directory-exists? cache-directory)
   (make-directory cache-directory))
 
+(define directories-to-render
+  (~> (directory-list project-directory)
+      (map #λ(build-path project-directory %1) _)
+      (filter directory-exists? _) ; would be #f for files
+      (filter #λ(file-exists? (build-path %1 "render")) _))) ; if dir/render is a file
+
+; rendered-files is a file with one json list in it
+
 (define (move-file-to-cache file)
   (system (string-join (list "mv "
                              (path->string file)
                              (path->string cache-directory)))))
-
-; rendered-files is a file with one json list in it
 
 (define (render-directory dir)
   (define render (build-path dir "render"))
@@ -29,13 +36,14 @@
            (string->jsexpr _)
            (map #λ(build-path dir %1) _)))) ; read out rendered files
 
-(define directories-to-render
-  (~> (directory-list project-directory)
-      (map #λ(build-path project-directory %1) _)
-      (filter directory-exists? _) ; would be #f for files
-      (filter #λ(file-exists? (build-path %1 "render")) _))) ; if dir/render is a file
+; post-process : path-string? -> void?
+(define (post-process path)
+  (resize-@nx path)
+  (resize-resizeto path)
+  (crop path)
+  ;; (autotrim path)
+  (resize-@2x path))
 
-(define (post-process)
-  (system "ls ./skin.Retome/.cache/"))
-
-(void (map render-directory directories-to-render))
+(define (main)
+  (map render-directory directories-to-render)
+  (map post-process (directory-list cache-directory)))
