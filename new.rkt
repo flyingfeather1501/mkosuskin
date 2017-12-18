@@ -6,15 +6,31 @@
 
 (provide (all-defined-out)) ; for requiring this file in a repl when developing
 
-; project-directory : path-string?
-(define project-directory "./skin.Retome")
-(define cache-directory (build-path project-directory ".cache"))
+(define current-project-directory (make-parameter "skin.Retome"))
+(define current-revision (make-parameter "dev"))
+(define modules empty)
+(command-line
+  #:program "mkosuskin"
+  #:once-each
+  [("-p" "--project") dir
+                      "Specify project directory"
+                      (current-project-directory dir)]
+  [("-r" "--revision") rev
+                       "Specify revision string (default is 'dev')"
+                       (current-revision rev)]
+  #:multi
+  [("-m" "--module") mod
+                     "Specify extra modules to render"
+                     (set! modules (append modules (list mod)))])
+
+;; (define project-directory "./skin.Retome")
+(define cache-directory (build-path (current-project-directory) ".cache"))
 (unless (directory-exists? cache-directory)
   (make-directory cache-directory))
 
 (define directories-to-render
-  (~> (directory-list project-directory)
-      (map #λ(build-path project-directory %1) _)
+  (~> (directory-list (current-project-directory))
+      (map #λ(build-path (current-project-directory) %1) _)
       (filter directory-exists? _) ; would be #f for files
       (filter #λ(file-exists? (build-path %1 "render")) _))) ; if dir/render is a file
 
@@ -45,6 +61,26 @@
   (trim path)
   (resize-@2x path))
 
+(define (package dir)
+  (define skinname (path->string (path-replace (current-project-directory) "skin." "")))
+  (define outfile (build-path (current-project-directory)
+                              ".out"
+                              (string-append skinname (current-revision) ".zip")))
+  (run-command "7z a"
+               (build-path (current-project-directory) ".out" (string-append skinname ".zip"))
+               (map string->path (directory-list cache-directory)))
+  (rename-file-or-directory outfile
+                            (path-replace-extension outfile ".osk")))
+
+(define (optimize-png-in-dir dir)
+  (run-command "pngquant --skip-if-larger --ext .png --force"
+               (~> (directory-list dir)
+                   (filter #λ(path-has-extension? %1 ".png") _)
+                   (map #λ(build-path dir %1) _)
+                   (map path->string _))))
+
 (define (main)
   (map render-directory directories-to-render)
-  (map post-process (directory-list cache-directory)))
+  (map post-process (directory-list cache-directory))
+  (optimize-png-in-dir cache-directory)
+  (package cache-directory))
