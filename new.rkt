@@ -42,7 +42,7 @@
   (resize-@nx path)
   (resize-resizeto path)
   (crop path)
-  ;; (autotrim path)
+  (trim path)
   (resize-@2x path))
 
 (define (main)

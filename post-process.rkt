@@ -2,6 +2,7 @@
 (require threading
          "helper.rkt")
 
+(provide resize-@nx resize-@2x resize-resizeto crop trim)
 
 ; orig, target : path?
 ; ratio : number?
@@ -65,10 +66,11 @@
                        (path->string target))
           (delete-file path)]))
 
-#|
-autotrim () {}
-  echoreport trimming $1 ...
-  convert -trim +repage $1 "$(echo $1 | sed 's/totrim\.png/.png/g')"
-  rm $1
-; export -f autotrim
-|#
+(define (trim path)
+  (cond [(not (regexp-match #px"totrim" (path->string path))) #f]
+        [else
+          (define target (path-replace path "_totrim" ""))
+          (run-command "convert -trim +repage"
+                       path
+                       target)
+          (delete-file path)]))
