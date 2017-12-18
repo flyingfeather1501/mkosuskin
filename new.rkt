@@ -1,6 +1,7 @@
 #lang rackjure
 (require json
          threading
+         "helper.rkt"
          "post-process.rkt")
 
 (provide (all-defined-out)) ; for requiring this file in a repl when developing
