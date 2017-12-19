@@ -28,7 +28,12 @@
 
 (define (default-directories-or-specified-module? path)
   (cond [(not (path-contains? (path-basename path) "%")) #t]
-        [(string-split (path->string path) "%")]))
+        [(share-some-elements? (~> (string-split (path->string path) "%")
+                                   (map (λ (x) (string-split x ".")) _) ; handle a%ja.blend
+                                   (rest) ; first element is path up to first %. drop it
+                                   (map first _)) ; drop the extension after string-split
+                               modules) #t]
+        [else #f]))
 
 (define directories-to-render
   (~> (directory-list (current-project-directory))
