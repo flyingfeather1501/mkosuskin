@@ -4,8 +4,6 @@
          "helper.rkt"
          "post-process.rkt")
 
-(provide (all-defined-out)) ; for requiring this file in a repl when developing
-
 (define current-project-directory (make-parameter "skin.Retome"))
 (define current-revision (make-parameter "dev"))
 (define modules empty)
@@ -28,11 +26,16 @@
 (unless (directory-exists? cache-directory)
   (make-directory cache-directory))
 
+(define (default-directories-or-specified-module? path)
+  (cond [(not (path-contains? (path-basename path) "%")) #t]
+        [(string-split (path->string path) "%")]))
+
 (define directories-to-render
   (~> (directory-list (current-project-directory))
       (map #λ(build-path (current-project-directory) %1) _)
       (filter directory-exists? _) ; would be #f for files
-      (filter #λ(file-exists? (build-path %1 "render")) _))) ; if dir/render is a file
+      (filter #λ(file-exists? (build-path %1 "render")) _) ; if dir/render is a file
+      (filter default-directories-or-specified-module? _)))
 
 ; rendered-files is a file with one json list in it
 
