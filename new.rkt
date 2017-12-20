@@ -27,13 +27,18 @@
   (make-directory cache-directory))
 
 (define (default-directories-or-specified-module? path)
-  (cond [(not (path-contains? (path-basename path) "%")) #t]
-        [(share-some-elements? (~> (string-split (path->string path) "%")
-                                   (map (λ (x) (string-split x ".")) _) ; handle a%ja.blend
-                                   (rest) ; first element is path up to first %. drop it
-                                   (map first _)) ; drop the extension after string-split
-                               modules) #t]
-        [else #f]))
+  (cond
+    ; if path doesn't specify module like path%modname, it should be rendered
+    [(not (path-contains? (path-basename path) "%"))
+     #t]
+    ; if path does, parse the modules and compare with the 'modules' list
+    [(share-some-elements? (~> (string-split (path->string path) "%")
+                               (map (λ (x) (string-split x ".")) _) ; handle a%ja.blend
+                               (rest) ; first element is path up to first %. drop it
+                               (map first _)) ; drop the extension after string-split
+                           modules)
+     #t]
+    [else #f]))
 
 (define directories-to-render
   (~> (directory-list (current-project-directory))
