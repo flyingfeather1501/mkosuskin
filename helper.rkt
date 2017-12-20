@@ -19,3 +19,6 @@
 
 (define (run-command . lst)
   (system (string-join (flatten lst))))
+
+(define (share-some-elements? set1 set2)
+  (ormap (λ (x) (set-member? set1 x)) set2))
