@@ -20,5 +20,6 @@
 (define (run-command . lst)
   (system (string-join (flatten lst))))
 
-(define (share-some-elements? set1 set2)
-  (ormap (λ (x) (set-member? set1 x)) set2))
+; Thanks https://stackoverflow.com/questions/47908137/checking-if-lists-share-one-or-more-elements-in-racket
+(define (share-some-elements? . sets)
+  (not (empty? (apply set-intersect sets))))
