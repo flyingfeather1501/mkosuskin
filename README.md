@@ -1,29 +1,25 @@
-## License
-Copyright © 2017 Kisaragi Hiu <flyingfeather1501@gmail.com>
+# mkosuskin
 
-This work is Free.
-You can redistribute it and/or modify it under the terms of the Do What The Fuck You Want To Public License, Version 2, as published by Sam Hocevar. A copy of the license is shown below.
-```
-        DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE 
-                    Version 2, December 2004 
+Turn a folder with a bunch of project files & individual render scripts into a .osk.
 
- Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
+## Folder format
 
- Everyone is permitted to copy and distribute verbatim or modified 
- copies of this license document, and changing it is allowed as long 
- as the name is changed. 
+Specify a folder to render with -p.
 
-            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE 
-   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION 
+### render script
 
-    0. You just DO WHAT THE FUCK YOU WANT TO.
-```
+If an executable called `render` is in a subdirectory, it'll be executed.
 
+It should handle the rendering of whatever is in that folder, and return a list of rendered files via a file called `rendered-files`, containing a json list of files.
 
-This work utilizes an external work:
+`mkosuskin.rkt` will then look up the files and move them to a cache directory, `.cache/`, under the project directory.
 
-### utils/render_marker.py
+### post processing
 
-Copyright © 2015 [p2or](https://blender.stackexchange.com/users/3710/p2or) on StackExchange <https://blender.stackexchange.com/users/3710/p2or>
+A series of post processing actions will be run on the files in cache depending on their filenames.
 
-from https://blender.stackexchange.com/questions/23121
+- resize-@nx: filename@*n*x will get resized to filename@2x
+- resize-resizeto: filename_resizeto*n*x*m* or filename_resizeto*n*%, *n*x*m* or *n*% is passed to `convert -resize`
+- crop: filename_tocrop*n*x*m*+*x*+*y* will be cropped to an area of *n*x*m*, with an offset (*x*, *y*)
+- trim: filename_totrim gets trimmed
+- resize-@2x: filename@2x gets resized to just filename, with the @2x version kept
