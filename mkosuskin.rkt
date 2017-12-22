@@ -84,13 +84,13 @@
   (resize-@2x path))
 
 (define (package dir)
-  (define skinname (path->string (path-replace (current-project-directory) "skin." "")))
+  (define skinname (path->string (path-replace (current-project-directory) #rx".*skin\\." "")))
   (define outfile (build-path (current-project-directory)
                               ".out"
-                              (string-append skinname (current-revision) ".zip")))
+                              (string-append skinname " " (current-revision) ".zip")))
   (run-command "7z a"
-               (build-path (current-project-directory) ".out" (string-append skinname ".zip"))
-               (map string->path (directory-list cache-directory)))
+               (path->string outfile)
+               (map path->string (directory-list cache-directory #:build? #t)))
   (rename-file-or-directory outfile
                             (path-replace-extension outfile ".osk")))
 
