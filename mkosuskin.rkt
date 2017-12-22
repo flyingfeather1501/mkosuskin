@@ -75,13 +75,12 @@
            (string->jsexpr _)
            (map #λ(build-path dir %1) _)))) ; read out rendered files
 
-; post-process : path-string? -> void?
-(define (post-process path)
-  (resize-@nx path)
-  (resize-resizeto path)
-  (crop path)
-  (trim path)
-  (resize-@2x path))
+; post-process : path? -> void?
+(define (post-process dir)
+  (map resize-@ (directory-list dir #:build? #t))
+  (map resize-resizeto (directory-list dir #:build? #t))
+  (map crop (directory-list dir #:build? #t))
+  (map trim (directory-list dir #:build? #t)))
 
 (define (package dir)
   (define skinname (path->string (path-replace (current-project-directory) #rx".*skin\\." "")))
