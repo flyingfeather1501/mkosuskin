@@ -5,6 +5,7 @@
 
 (define (path-replace path from to #:all [all? #t])
   (string->path (string-replace (path->string path) from to #:all? all?)))
+
 (define (path-basename path)
   (path-replace path #rx".*/" ""))
 
@@ -17,6 +18,7 @@
 (define (path-suffix? path suffix)
   (string-suffix? (path->string path) suffix))
 
+;; run-command : ListOf String -> Void
 (define (run-command . lst)
   (system (string-join (flatten lst))))
 
