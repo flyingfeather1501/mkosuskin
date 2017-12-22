@@ -9,24 +9,31 @@
                                                "skin.Retome")))
 (define current-revision (make-parameter "dev"))
 (define modules empty)
-(command-line
-  #:program "mkosuskin"
-  #:once-each
-  [("-p" "--project") dir
-                      "Specify project directory"
-                      (current-project-directory dir)]
-  [("-r" "--revision") rev
-                       "Specify revision string (default is 'dev')"
-                       (current-revision rev)]
-  #:multi
-  [("-m" "--module") mod
-                     "Specify extra modules to render"
-                     (set! modules (append modules (list mod)))])
-
-;; (define project-directory "./skin.Retome")
 (define cache-directory (build-path (current-project-directory) ".cache"))
-(unless (directory-exists? cache-directory)
-  (make-directory cache-directory))
+
+(define (main)
+  (parse-arguments)
+  (unless (directory-exists? cache-directory)
+    (make-directory cache-directory))
+  (map render-directory directories-to-render)
+  (post-process cache-directory)
+  (optimize-png-in-dir cache-directory)
+  (package cache-directory))
+
+(define (parse-arguments)
+  (command-line
+   #:program "mkosuskin"
+   #:once-each
+   [("-p" "--project") dir
+                       "Specify project directory"
+                       (current-project-directory (build-path dir))]
+   [("-r" "--revision") rev
+                        "Specify revision string (default is 'dev')"
+                        (current-revision rev)]
+   #:multi
+   [("-m" "--module") mod
+                      "Specify extra modules to render"
+                      (set! modules (append modules (list mod)))]))
 
 (define (default-directories-or-specified-module? path)
   (cond
@@ -94,8 +101,5 @@
                    (map #λ(build-path dir %1) _)
                    (map path->string _))))
 
-(define (main)
-  (map render-directory directories-to-render)
-  (map post-process (directory-list cache-directory))
-  (optimize-png-in-dir cache-directory)
-  (package cache-directory))
+(unless (= 0 (vector-length (current-command-line-arguments)))
+  (main))
