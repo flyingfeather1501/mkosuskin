@@ -91,7 +91,7 @@
                               ".out"
                               (string-append skinname " " (current-revision) ".zip")))
   (run-command "7z a"
-               (path->string outfile)
+               (string-append "\"" (path->string outfile) "\"") ; (system) is like an ffi to shell, which would split on the space. quote this for it
                (map path->string (directory-list cache-directory #:build? #t)))
   (rename-file-or-directory outfile
                             (path-replace-extension outfile ".osk")))
