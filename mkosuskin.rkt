@@ -59,9 +59,7 @@
 ; rendered-files is a file with one json list in it
 
 (define (move-file-to-cache file)
-  (system (string-join (list "mv "
-                             (path->string file)
-                             (path->string cache-directory)))))
+  (rename-file-or-directory file (build-path cache-directory (path-basename file))))
 
 (define (render-directory dir)
   (define render (build-path dir "render"))
@@ -77,13 +75,12 @@
 
 ; post-process : path? -> void?
 (define (post-process dir)
-  (define dir-listing (directory-list dir #:build? #t))
-  (define files (filter file-exists? dir-listing))
-  (map post-process (filter directory-exists? dir-listing)) ; subdirectories
-  (map resize-@ files)
-  (map resize-resizeto files)
-  (map crop files)
-  (map trim files))
+  ;; (directory-list dir) is run repeatedly because *the folder content changes*
+  (map post-process (filter directory-exists? (directory-list dir #:build? #t))) ; subdirectories
+  (map resize-@ (filter file-exists? (directory-list dir #:build? #t)))
+  (map resize-resizeto (filter file-exists? (directory-list dir #:build? #t)))
+  (map crop (filter file-exists? (directory-list dir #:build? #t)))
+  (map trim (filter file-exists? (directory-list dir #:build? #t))))
 
 (define (package dir)
   (define skinname (path->string (path-replace (current-project-directory) #rx".*skin\\." "")))
