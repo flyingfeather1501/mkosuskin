@@ -77,10 +77,13 @@
 
 ; post-process : path? -> void?
 (define (post-process dir)
-  (map resize-@ (directory-list dir #:build? #t))
-  (map resize-resizeto (directory-list dir #:build? #t))
-  (map crop (directory-list dir #:build? #t))
-  (map trim (directory-list dir #:build? #t)))
+  (define dir-listing (directory-list dir #:build? #t))
+  (define files (filter file-exists? dir-listing))
+  (map post-process (filter directory-exists? dir-listing)) ; subdirectories
+  (map resize-@ files)
+  (map resize-resizeto files)
+  (map crop files)
+  (map trim files))
 
 (define (package dir)
   (define skinname (path->string (path-replace (current-project-directory) #rx".*skin\\." "")))
