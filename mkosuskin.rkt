@@ -97,6 +97,7 @@
                             (path-replace-extension outfile ".osk")))
 
 (define (optimize-png-in-dir dir)
+  (displayln "optimizing png")
   (run-command "pngquant --skip-if-larger --ext .png --force"
                (~> (directory-list dir)
                    (filter #λ(path-has-extension? %1 ".png") _)
