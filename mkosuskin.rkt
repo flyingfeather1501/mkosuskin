@@ -15,7 +15,11 @@
   (parse-arguments)
   (unless (directory-exists? cache-directory)
     (make-directory cache-directory))
-  (map render-directory directories-to-render)
+  ;; this should be run here, after modules has already been set
+  (map render-directory (~> (directory-list (current-project-directory) #:build? #t)
+                            (filter directory-exists? _) ; only directories
+                            (filter #λ(file-exists? (build-path %1 "render")) _) ; if dir/render is a file
+                            (filter default-directories-or-specified-module? _)))
   (post-process cache-directory)
   (optimize-png-in-dir cache-directory)
   (package cache-directory))
@@ -36,24 +40,18 @@
                       (set! modules (append modules (list mod)))]))
 
 (define (default-directories-or-specified-module? path)
+  (define (parse-mods path)
+    (~> (string-split (path->string path) "%")
+        (map (λ (x) (string-split x ".")) _) ; handle a%ja.blend
+        (rest) ; first element is path up to first "%". drop it
+        (map first _))) ; drop the extension after string-split
   (cond
     ; if path doesn't specify module like path%modname, it should be rendered
-    [(not (path-contains? (path-basename path) "%"))
-     #t]
+    [(not (path-contains? (path-basename path) "%")) #t]
     ; if path does, parse the modules and compare with the 'modules' list
-    [(share-some-elements? (~> (string-split (path->string path) "%")
-                               (map (λ (x) (string-split x ".")) _) ; handle a%ja.blend
-                               (rest) ; first element is path up to first %. drop it
-                               (map first _)) ; drop the extension after string-split
-                           modules)
-     #t]
+    [(share-some-elements? (parse-mods path)
+                           modules) #t]
     [else #f]))
-
-(define directories-to-render
-  (~> (directory-list (current-project-directory) #:build? #t)
-      (filter directory-exists? _) ; would be #f for files
-      (filter #λ(file-exists? (build-path %1 "render")) _) ; if dir/render is a file
-      (filter default-directories-or-specified-module? _)))
 
 ; rendered-files is a file with one json list in it
 
