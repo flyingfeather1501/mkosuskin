@@ -50,8 +50,7 @@
     [else #f]))
 
 (define directories-to-render
-  (~> (directory-list (current-project-directory))
-      (map #λ(build-path (current-project-directory) %1) _)
+  (~> (directory-list (current-project-directory) #:build? #t)
       (filter directory-exists? _) ; would be #f for files
       (filter #λ(file-exists? (build-path %1 "render")) _) ; if dir/render is a file
       (filter default-directories-or-specified-module? _)))
