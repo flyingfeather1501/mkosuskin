@@ -91,7 +91,9 @@
                (map (λ (x) (string-replace (path->string x) " " "\\ "))
                     (directory-list cache-directory #:build? #t)))
   (rename-file-or-directory outfile
-                            (path-replace-extension outfile ".osk")))
+                            (path-replace-extension outfile ".osk")
+                            ;; overwrite existing file?
+                            #t))
 
 (define (optimize-png-in-dir dir)
   (displayln "optimizing png")
