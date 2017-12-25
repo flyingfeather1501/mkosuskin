@@ -89,7 +89,7 @@
   (cond [(not (regexp-match #px"totrim" (path->string base-path))) #f]
         [(not (file-exists? path)) #f]
         [else
-          (define target (path-replace path "_totrim" ""))
+          (define target (path-replace path "totrim" ""))
           (run-command "convert -trim +repage"
                        (path->string path)
                        (path->string target))
