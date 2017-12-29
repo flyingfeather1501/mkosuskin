@@ -7,7 +7,7 @@
 ; orig, target : path?
 ; ratio : number?
 (define (resize-vips orig target ratio)
-  (run-command "vips resize"
+  (run-command "vips" "resize"
                (path->string orig)
                (path->string target)
                (number->string (exact->inexact ratio))))
@@ -15,7 +15,7 @@
 ; orig, target : path?
 ; size : string?
 (define (resize-im orig target size)
-  (run-command "convert -resize"
+  (run-command "convert" "-resize"
                size
                (path->string orig)
                (path->string target)))
@@ -76,7 +76,7 @@
                 (regexp-match #px"[[:digit:]]+x[[:digit:]]+\\+[[:digit:]]+\\+[[:digit:]]" _)
                 (first _))) ; regexp-match returns a list of matching substrings
           (define target (path-replace path (string-append "_tocrop" crop-dimention) ""))
-          (run-command "convert -crop"
+          (run-command "convert" "-crop"
                        crop-dimention
                        (path->string path)
                        (path->string target))
@@ -90,7 +90,7 @@
         [(not (file-exists? path)) #f]
         [else
           (define target (path-replace path "totrim" ""))
-          (run-command "convert -trim +repage"
+          (run-command "convert" "-trim" "+repage"
                        (path->string path)
                        (path->string target))
           (delete-file path)

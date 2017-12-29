@@ -19,9 +19,13 @@
   (string-suffix? (path->string path) suffix))
 
 ;; run-command : ListOf String -> Void
+;; each argument is a seperate argument on command line
 (define (run-command . lst)
-  (system (string-join (flatten lst))))
+  (system (string-join (map quote-string-for-shell (flatten lst)))))
 
 ; Thanks https://stackoverflow.com/questions/47908137/checking-if-lists-share-one-or-more-elements-in-racket
 (define (share-some-elements? . sets)
   (not (empty? (apply set-intersect sets))))
+
+(define (quote-string-for-shell string)
+  (string-replace string " " "\\ "))

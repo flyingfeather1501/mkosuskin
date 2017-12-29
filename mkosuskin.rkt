@@ -86,10 +86,9 @@
   (define outfile (build-path (current-project-directory)
                               ".out"
                               (string-append skinname " " (current-revision) ".zip")))
-  (run-command "7z a"
-               (string-append "\"" (path->string outfile) "\"") ; (system) is like an ffi to shell, which would split on the space. quote this for it
-               (map (λ (x) (string-replace (path->string x) " " "\\ "))
-                    (directory-list cache-directory #:build? #t)))
+  (run-command "7z" "a"
+               (path->string outfile)
+               (directory-list cache-directory #:build? #t))
   (rename-file-or-directory outfile
                             (path-replace-extension outfile ".osk")
                             ;; overwrite existing file?
@@ -97,7 +96,7 @@
 
 (define (optimize-png-in-dir dir)
   (displayln "optimizing png")
-  (run-command "pngquant --skip-if-larger --ext .png --force"
+  (run-command "pngquant" "--skip-if-larger" "--ext" ".png" "--force"
                (~> (directory-list dir)
                    (filter #λ(path-has-extension? %1 ".png") _)
                    (map #λ(build-path dir %1) _)
