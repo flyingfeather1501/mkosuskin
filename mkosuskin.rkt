@@ -16,7 +16,10 @@
   (unless (directory-exists? cache-directory)
     (make-directory cache-directory))
   ;; just clean up cache for now
-  (map delete-file (directory-list cache-directory #:build? #t))
+  (map (λ (path) (if (directory-exists? path)
+                     (delete-directory path)
+                     (delete-file path)))
+       (directory-list cache-directory #:build? #t))
   ;; this should be run here, after modules has already been set
   (map render-directory (~> (directory-list (current-project-directory) #:build? #t)
                             (filter directory-exists? _) ; only directories
