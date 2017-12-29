@@ -67,7 +67,7 @@
   (define render (build-path dir "render"))
   (unless (member 'execute
                   (file-or-directory-permissions render))
-    (error 'render-directory (string-append (build-path dir "render") " is not executable")))
+    (error 'render-directory (string-append (path->string (build-path dir "render")) " is not executable")))
   (system* render) ; run the render
   (map move-file-to-cache
        (~> (build-path dir "rendered-files") ; read the file 'rendered-files'
