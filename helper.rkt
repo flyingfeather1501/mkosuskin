@@ -1,6 +1,8 @@
 #lang racket
 ; Helper functions
 
+(require threading)
+
 (provide (all-defined-out))
 
 (define (path-replace path from to #:all [all? #t])
@@ -18,10 +20,12 @@
 (define (path-suffix? path suffix)
   (string-suffix? (path->string path) suffix))
 
-;; run-command : ListOf String -> Void
 ;; each argument is a seperate argument on command line
-(define (run-command . lst)
-  (system (string-join (map quote-string-for-shell (flatten lst)))))
+(define/contract (run-command . lst)
+  (->* () () #:rest (listof string?) boolean?) ; system returns a boolean
+  (system (~> (flatten lst)
+              (map (λ (x) (string-replace x " " "\\ ")) _)
+              string-join)))
 
 ; Thanks https://stackoverflow.com/questions/47908137/checking-if-lists-share-one-or-more-elements-in-racket
 (define (share-some-elements? . sets)
