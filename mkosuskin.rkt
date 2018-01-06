@@ -91,7 +91,7 @@
                               (string-append skinname " " (current-revision) ".zip")))
   (run-command "7z" "a"
                (path->string outfile)
-               (directory-list cache-directory #:build? #t))
+               (map path->string (directory-list cache-directory #:build? #t)))
   (rename-file-or-directory outfile
                             (path-replace-extension outfile ".osk")
                             ;; overwrite existing file?
