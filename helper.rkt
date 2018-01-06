@@ -1,7 +1,14 @@
 #lang racket
 ; Helper functions
 
-(require threading)
+(require threading (for-syntax racket/base syntax/parse))
+
+; http://docs.racket-lang.org/syntax-parse-example/index.html?q=rec%2Fc#%28part._rec_c%29
+(define-syntax-rule (rec/c t ctc)
+  (letrec ([rec-ctc
+            (let-syntax ([t (syntax-parser (_:id #'(recursive-contract rec-ctc)))])
+              ctc)])
+      rec-ctc))
 
 (provide (all-defined-out))
 
@@ -22,7 +29,7 @@
 
 ;; each argument is a seperate argument on command line
 (define/contract (run-command . lst)
-  (->* () () #:rest (listof string?) boolean?) ; system returns a boolean
+  (->* () () #:rest (rec/c t (or/c string? (listof t))) boolean?) ; system returns a boolean
   (system (~> (flatten lst)
               (map (λ (x) (string-replace x " " "\\ ")) _)
               string-join)))
