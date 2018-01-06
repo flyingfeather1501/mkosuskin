@@ -24,6 +24,17 @@
   (map render-directory (~> (directory-list (current-project-directory) #:build? #t)
                             (filter directory-exists? _) ; only directories
                             (filter #λ(file-exists? (build-path %1 "render")) _) ; if dir/render is a file
+                            (filter (λ (%1)
+                                       (if (member 'execute
+                                                   (file-or-directory-permissions
+                                                     (build-path %1 "render")))
+                                         #t
+                                         (begin
+                                           (displayln (string-append "warning: "
+                                                                     (path->string (build-path %1 "render"))
+                                                                     " is present but is not executable"))
+                                           #f)))
+                                    _)
                             (filter default-directories-or-specified-module? _)))
   (post-process cache-directory)
   (optimize-png-in-dir cache-directory)
