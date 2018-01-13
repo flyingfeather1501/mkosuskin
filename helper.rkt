@@ -1,16 +1,20 @@
 #lang racket
-; Helper functions
+;; Helper functions
 
-(require threading (for-syntax racket/base syntax/parse))
+(require (for-syntax racket/base
+                     syntax/parse)
+         threading
+         rackunit)
 
-; http://docs.racket-lang.org/syntax-parse-example/index.html?q=rec%2Fc#%28part._rec_c%29
+(provide (all-defined-out))
+
+;; recursive contract
+;; http://docs.racket-lang.org/syntax-parse-example/index.html?q=rec%2Fc#%28part._rec_c%29
 (define-syntax-rule (rec/c t ctc)
   (letrec ([rec-ctc
             (let-syntax ([t (syntax-parser (_:id #'(recursive-contract rec-ctc)))])
               ctc)])
       rec-ctc))
-
-(provide (all-defined-out))
 
 (define (path-replace path from to #:all [all? #t])
   (string->path (string-replace (path->string path) from to #:all? all?)))
@@ -42,3 +46,11 @@
 
 (define (quote-string-for-shell string)
   (string-replace string " " "\\ "))
+
+(module+ test
+  (check-equal? (path-contains? (build-path "/abc") "b") #t)
+  (check-equal? (path-contains? (build-path "/abc") "no") #f)
+  (check-equal? (path-prefix? (build-path "/abc") "/a") #t)
+  (check-equal? (path-prefix? (build-path "/abc") "/d") #f)
+  (check-equal? (path-suffix? (build-path "/abc") "c") #t)
+  (check-equal? (path-suffix? (build-path "/abc") "d") #f))
