@@ -71,7 +71,8 @@
 
 ; rendered-files is a file with one json list in it
 
-(define (move-file-to-cache file)
+(define/contract (move-file-to-cache file)
+  (-> path? void?)
   (rename-file-or-directory file (build-path cache-directory (path-basename file))))
 
 (define (render-directory dir)
