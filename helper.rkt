@@ -16,7 +16,9 @@
   (string->path (string-replace (path->string path) from to #:all? all?)))
 
 (define (path-basename path)
-  (path-replace path #rx".*/" ""))
+  (if (path-suffix? path "/") ; handle cases like "/path/to/dir/"
+      (path-basename (path-replace path #rx"/$") "")
+      (path-replace path #rx".*/" "")))
 
 (define (path-contains? path contained)
   (string-contains? (path->string path) contained))
