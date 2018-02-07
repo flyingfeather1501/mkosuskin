@@ -72,6 +72,9 @@
 (define/contract (move-file-to-cache file)
   (-> path? void?)
   (rename-file-or-directory file (build-path cache-directory (path-basename file))))
+(define/contract (copy-file-to-cache file)
+  (-> path? void?)
+  (copy-file file (build-path cache-directory (path-basename file))))
 
 (define (render-directory dir)
   (define render (build-path dir "render"))
@@ -80,7 +83,12 @@
     (error 'render-directory (string-append (path->string (build-path dir "render")) " is not executable")))
   (system* render) ; run the render
   (map move-file-to-cache
-       (~> (build-path dir "rendered-files") ; read the file 'rendered-files'
+       (~> (build-path dir "to-move") ; read the file 'rendered-files'
+           (file->string _)
+           (string->jsexpr _)
+           (map #λ(build-path dir %1) _)))
+  (map copy-file-to-cache
+       (~> (build-path dir "to-copy")
            (file->string _)
            (string->jsexpr _)
            (map #λ(build-path dir %1) _)))) ; read out rendered files
