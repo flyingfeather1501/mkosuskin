@@ -81,16 +81,20 @@
 
 (define (render-directory dir)
   (define render (build-path dir "render"))
+  (define to-move (build-path dir "to-move"))
+  (define to-copy (build-path dir "to-copy"))
   (unless (member 'execute
                   (file-or-directory-permissions render))
     (error 'render-directory (string-append (path->string (build-path dir "render")) " is not executable")))
   (system* render) ; run the render
-  (map move-file-to-cache
-       (~> (file->jsexpr (build-path dir "to-move"))
-           (map #λ(build-path dir %1) _))) ; turn into absolute path
-  (map copy-file-to-cache
-       (~> (file->jsexpr (build-path dir "to-copy"))
-           (map #λ(build-path dir %1) _))))
+  (when (file-exists? to-move)
+    (map move-file-to-cache
+         (map (λ (path) (build-path dir path)) ; complete the paths in to-move
+              (file->jsexpr to-move))))
+  (when (file-exists? to-copy)
+    (map copy-file-to-cache
+         (map (λ (path) (build-path dir path))
+              (file->jsexpr to-copy)))))
 
 ; post-process : path? -> void?
 (define (post-process dir)
