@@ -76,6 +76,9 @@
   (-> path? void?)
   (copy-file file (build-path cache-directory (path-basename file))))
 
+(define (file->jsexpr file)
+  (string->jsexpr (file->string file)))
+
 (define (render-directory dir)
   (define render (build-path dir "render"))
   (unless (member 'execute
@@ -83,15 +86,11 @@
     (error 'render-directory (string-append (path->string (build-path dir "render")) " is not executable")))
   (system* render) ; run the render
   (map move-file-to-cache
-       (~> (build-path dir "to-move") ; read the file 'rendered-files'
-           (file->string _)
-           (string->jsexpr _)
-           (map #λ(build-path dir %1) _)))
+       (~> (file->jsexpr (build-path dir "to-move"))
+           (map #λ(build-path dir %1) _))) ; turn into absolute path
   (map copy-file-to-cache
-       (~> (build-path dir "to-copy")
-           (file->string _)
-           (string->jsexpr _)
-           (map #λ(build-path dir %1) _)))) ; read out rendered files
+       (~> (file->jsexpr (build-path dir "to-copy"))
+           (map #λ(build-path dir %1) _))))
 
 ; post-process : path? -> void?
 (define (post-process dir)
