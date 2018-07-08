@@ -15,7 +15,7 @@
 ; orig, target : path?
 ; size : string?
 (define (resize-im orig target size)
-  (run-command "convert" "-resize"
+  (run-command "gm" "convert" "-resize"
                size
                (path->string orig)
                (path->string target)))
