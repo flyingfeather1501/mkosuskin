@@ -98,12 +98,13 @@
 
 ; post-process : path? -> void?
 (define (post-process dir)
-  ;; (directory-list dir) is run repeatedly because *the folder content changes*
-  (map post-process (filter directory-exists? (directory-list dir #:build? #t))) ; subdirectories
-  (map resize-@ (filter file-exists? (directory-list dir #:build? #t)))
-  (map resize-resizeto (filter file-exists? (directory-list dir #:build? #t)))
-  (map crop (filter file-exists? (directory-list dir #:build? #t)))
-  (map trim (filter file-exists? (directory-list dir #:build? #t))))
+  (define (files dir)
+    (map path->complete-path (sequence->list (in-directory dir file-exists?))))
+
+  (map resize-@ (files dir))
+  (map resize-resizeto (files dir))
+  (map crop (files dir))
+  (map trim (files dir)))
 
 (define (package dir)
   (define skinname (path->string (path-replace (current-project-directory) #rx".*skin\\." "")))
