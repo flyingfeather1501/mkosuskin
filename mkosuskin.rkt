@@ -71,10 +71,10 @@
 
 (define/contract (move-file-to-cache file)
   (-> path? void?)
-  (rename-file-or-directory file (build-path cache-directory (path-basename file))))
+  (rename-file-or-directory file (build-path cache-directory (path-basename file)) #t))
 (define/contract (copy-file-to-cache file)
   (-> path? void?)
-  (copy-file file (build-path cache-directory (path-basename file))))
+  (copy-file file (build-path cache-directory (path-basename file)) #t))
 
 (define (file->jsexpr file)
   (string->jsexpr (file->string file)))
